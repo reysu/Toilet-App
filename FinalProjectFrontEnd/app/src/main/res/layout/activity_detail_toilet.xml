@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+        <fragment
+            android:id="@+id/fetchaddressMap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/card"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/toilet_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="60dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:text="Toilet Name"
+            android:textColor="#000000"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toilet_name"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:text="20m"
+            android:textSize="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3131 McClintock Avenue 90007"
+            android:id="@+id/address"
+            android:layout_below="@id/distance"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="15dp"
+
+            />
+        <TextView
+            android:id="@+id/disability"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
+            android:text="Disabled Access " />
+        <ImageView
+            android:id="@+id/disabledCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/disability"
+            android:src="@drawable/ic_done_black_24px"
+            android:layout_marginTop="17dp"
+            android:maxHeight="15dp"
+            android:maxWidth="15dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_marginEnd="5dp"
+            android:tint="@android:color/holo_green_dark"
+            />
+        <TextView
+            android:id="@+id/requiresKey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/disability"
+            android:layout_alignParentEnd="true"
+            android:layout_alignStart="@id/disability"
+            android:text="Key Required" />
+        <ImageView
+            android:id="@+id/keyCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/requiresKey"
+            android:layout_below="@id/disability"
+            android:src="@drawable/ic_close_black_24px"
+            android:layout_marginTop="3dp"
+            android:maxHeight="15dp"
+            android:maxWidth="15dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_marginEnd="5dp"
+            android:tint="@android:color/holo_red_dark"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text = "Comments"
+            android:id="@+id/commentsTag"
+            android:layout_below="@id/address"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="0dp"
+            />
+
+        <ListView
+            android:id="@+id/comments"
+            android:layout_below="@id/commentsTag"
+            android:layout_width="wrap_content"
+            android:layout_height="275dp"
+            android:layout_marginStart = "0dp"
+            android:layout_marginEnd = "0dp"
+            />
+
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end|right"
+        android:layout_marginBottom="24dp"
+        android:layout_marginRight="24dp"
+        android:src="@android:drawable/ic_menu_upload"
+        app:fabSize="mini"
+        android:clickable="true"
+        app:backgroundTint="@android:color/darker_gray"
+        android:tint="@android:color/white"
+        />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end|right"
+        android:layout_marginBottom="24dp"
+        android:layout_marginRight="24dp"
+        android:src="@android:drawable/ic_menu_edit"
+        app:fabSize="mini"
+        android:clickable="true"
+        app:backgroundTint="@android:color/darker_gray"
+        android:tint="@android:color/white"
+        />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end|right"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@android:drawable/ic_input_add"
+        app:fabSize="normal"
+        android:clickable="true"
+        app:backgroundTint="@color/colorAccent"
+        android:tint="@android:color/white"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        />
+
+    </android.support.design.widget.CoordinatorLayout>
