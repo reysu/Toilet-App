@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name"></string>
+    <string name="title_activity_add_toilet">AddToiletActivity</string>
+</resources>
