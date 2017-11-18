@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -78,6 +79,9 @@ public class ListActivity extends AppCompatActivity  {
         Toilet toilet3 = new Toilet("Cafe 84","3131 Mcclintock Avenue",true,false);
         Toilet toilet4 = new Toilet("Starbucks","3131 Mcclintock Avenue",true,true);
         Toilet toilet5 = new Toilet("USC Village","3131 Mcclintock Avenue",false,false);
+        toilet.setLatitude(34.018740);
+        toilet.setLongitude(-118.291156);
+
 
         toilets.add(toilet);
         toilets.add(toilet2);
