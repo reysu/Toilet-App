@@ -1,5 +1,6 @@
 package itp341.pai.sonali.finalprojectfrontend.model;
 
+import android.location.Location;
 import android.media.Image;
 
 import java.io.Serializable;
@@ -19,6 +20,8 @@ public class Toilet implements Serializable{
     private boolean hasDisabilityAccomodations;
     private boolean requiresKey;
     private int points;
+    private double longitude;
+    private double latitude;
 
     private boolean upArrowSelected;
     private boolean downArrowSelected;
@@ -27,11 +30,16 @@ public class Toilet implements Serializable{
         return comments;
     }
 
-    public void addComments(String comment) {
-       comments.add(comment);
-    }
+    public double getLatitude() {return latitude;}
+    public double getLongitude() {return longitude;}
+    public void addComments(String comment) {comments.add(comment);}
 
+    public void setLatitude(double latitude)
+    {this.latitude = latitude;}
+    public void setLongitude(double longitude)
+    {this.longitude = longitude;}
     private List<String> comments;
+
     public Toilet(String nameOfLocation, String address, boolean hadDisabilityAccomodations, boolean requiresKey) {
         this.name = nameOfLocation;
         this.address = address;

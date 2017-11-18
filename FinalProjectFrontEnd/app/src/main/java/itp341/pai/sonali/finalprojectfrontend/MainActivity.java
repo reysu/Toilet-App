@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
 
         Window window = this.getWindow();
-        window.setTitle("a");
+        window.setTitle("Pooper");
         //change color of status bar
         window.setStatusBarColor(getResources().getColor(android.R.color.black));
 
