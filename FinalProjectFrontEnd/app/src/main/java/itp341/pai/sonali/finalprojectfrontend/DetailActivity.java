@@ -9,6 +9,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -18,6 +20,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -49,12 +53,20 @@ public class DetailActivity extends AppCompatActivity {
     FloatingActionButton fabComment;
     private ArrayAdapter<String> adap;
     private boolean isFABOpen;
+    private boolean isGuest;
+    private Toolbar mTopToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_toilet);
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#000000"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
+
+        mTopToolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        //setSupportActionBar(mTopToolbar);
+        mTopToolbar.setNavigationIcon(R.drawable.ic_image_white_24px);
+
+
 
         Window window = this.getWindow();
 
@@ -64,6 +76,8 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         final Toilet t = (Toilet)i.getSerializableExtra("toilet");
+        isGuest = i.getBooleanExtra("guest",false);
+
 //        bathroomId = getIntent().getIntExtra("bathroomId", -1);
 //
 //        try {
@@ -115,7 +129,11 @@ public class DetailActivity extends AppCompatActivity {
         fabButton = (FloatingActionButton) findViewById(R.id.fab);
         fabImage = (FloatingActionButton) findViewById(R.id.fabImage);
         fabComment = (FloatingActionButton) findViewById(R.id.fabComment);
-
+        if(isGuest){
+            fabButton.setVisibility(View.GONE);
+            fabImage.setVisibility(View.GONE);
+            fabComment.setVisibility(View.GONE);
+        }
         //floating action button listener
         fabButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,5 +171,25 @@ public class DetailActivity extends AppCompatActivity {
         });
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_favorite) {
+//           // Toast.makeText(MainActivity.this, "Action clicked", Toast.LENGTH_LONG).show();
+//            return true;
+//        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
