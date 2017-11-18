@@ -12,11 +12,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
-<<<<<<< HEAD
 import android.location.Location;
-=======
 import android.media.Image;
->>>>>>> 7502453e13cf9179ba495280e030d3a5814e6651
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
