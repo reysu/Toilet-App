@@ -14,12 +14,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-<<<<<<< HEAD
 import android.util.Log;
-=======
 import android.view.Menu;
 import android.view.MenuItem;
->>>>>>> 7502453e13cf9179ba495280e030d3a5814e6651
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -102,16 +99,13 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
     FloatingActionButton fabComment;
     private ArrayAdapter<String> adap;
     private boolean isFABOpen;
-<<<<<<< HEAD
     private Location currentLocation;
     private FusedLocationProviderClient mFusedLocationClient;
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "DetailActivity";
 
-=======
     private boolean isGuest;
     private Toolbar mTopToolbar;
->>>>>>> 7502453e13cf9179ba495280e030d3a5814e6651
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,13 +126,9 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
 
         Intent i = getIntent();
-<<<<<<< HEAD
         t = (Toilet) i.getSerializableExtra("toilet");
-=======
-        final Toilet t = (Toilet)i.getSerializableExtra("toilet");
-        isGuest = i.getBooleanExtra("guest",false);
+    isGuest = i.getBooleanExtra("guest",false);
 
->>>>>>> 7502453e13cf9179ba495280e030d3a5814e6651
 //        bathroomId = getIntent().getIntExtra("bathroomId", -1);
 //
 //        try {
@@ -331,14 +321,13 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+    }
         //noinspection SimplifiableIfStatement
 //        if (id == R.id.action_favorite) {
 //           // Toast.makeText(MainActivity.this, "Action clicked", Toast.LENGTH_LONG).show();
 //            return true;
 //        }
 
-<<<<<<< HEAD
 //    @Override
 //    public void onMyLocationClick(@NonNull Location location) {
 //        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
@@ -427,8 +416,6 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
     @Override
     public void PermissionDenied(int request_code) {
 
-=======
-        return super.onOptionsItemSelected(item);
->>>>>>> 7502453e13cf9179ba495280e030d3a5814e6651
+//        return super.onOptionsItemSelected();
     }
 }
