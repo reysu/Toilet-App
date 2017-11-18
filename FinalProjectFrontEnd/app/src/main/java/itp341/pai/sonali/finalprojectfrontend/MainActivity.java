@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText passwordInput;
     private Button signUpButton;
     private Button signInButton;
-
+    private Button guestButton;
     //private data members
     private String username;
     private String password;
@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         passwordInput = (EditText) findViewById(R.id.passwordInputField);
         signInButton = (Button) findViewById(R.id.signInButton);
         signUpButton = (Button) findViewById(R.id.signUpButton);
+
+        guestButton = (Button) findViewById(R.id.guestButton);
         username = "";
         password = "";
 
@@ -61,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(),ListActivity.class);
-                startActivity(i);
 //                username = usernameInput.getText().toString();
 //                password = passwordInput.getText().toString();
 //                //TO DO: send these to data base to verify if user exists
@@ -105,7 +105,9 @@ public class MainActivity extends AppCompatActivity {
 //                                    editor.putString(USERNAME, username);
 //                                    editor.putInt(USERID, userId);
 //                                    Intent i = new Intent(getApplicationContext(), ListActivity.class);
-//                                }
+//                                    i.putExtra("guest",false);
+//                                    startActivity(i);
+//                                    }
 //                            }
 //
 //                        }catch (Exception e)
@@ -122,6 +124,16 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //if exists, launch an intent to the listview page of all toilets
+
+            }
+        });
+        //listener for guest button
+        guestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    Intent i = new Intent(getApplicationContext(),ListActivity.class);
+                    i.putExtra("guest",true);
+                    startActivity(i);
 
             }
         });
@@ -183,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
                             editor.putString(USERNAME, username);
                             editor.putInt(USERID, userId);
                             Intent i = new Intent(getApplicationContext(), ListActivity.class);
+                            i.putExtra("guest",false);
+                            startActivity(i);
                         }
                     }
 

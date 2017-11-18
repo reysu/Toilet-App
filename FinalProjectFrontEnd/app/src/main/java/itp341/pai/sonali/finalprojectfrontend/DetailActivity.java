@@ -14,7 +14,12 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+<<<<<<< HEAD
 import android.util.Log;
+=======
+import android.view.Menu;
+import android.view.MenuItem;
+>>>>>>> 7502453e13cf9179ba495280e030d3a5814e6651
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -24,6 +29,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -95,17 +102,28 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
     FloatingActionButton fabComment;
     private ArrayAdapter<String> adap;
     private boolean isFABOpen;
+<<<<<<< HEAD
     private Location currentLocation;
     private FusedLocationProviderClient mFusedLocationClient;
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "DetailActivity";
 
+=======
+    private boolean isGuest;
+    private Toolbar mTopToolbar;
+>>>>>>> 7502453e13cf9179ba495280e030d3a5814e6651
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_toilet);
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#000000"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
+
+        mTopToolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        //setSupportActionBar(mTopToolbar);
+        mTopToolbar.setNavigationIcon(R.drawable.ic_image_white_24px);
+
+
 
         Window window = this.getWindow();
 
@@ -114,7 +132,13 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
 
         Intent i = getIntent();
+<<<<<<< HEAD
         t = (Toilet) i.getSerializableExtra("toilet");
+=======
+        final Toilet t = (Toilet)i.getSerializableExtra("toilet");
+        isGuest = i.getBooleanExtra("guest",false);
+
+>>>>>>> 7502453e13cf9179ba495280e030d3a5814e6651
 //        bathroomId = getIntent().getIntExtra("bathroomId", -1);
 //
 //        try {
@@ -175,7 +199,11 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         fabButton = (FloatingActionButton) findViewById(R.id.fab);
         fabImage = (FloatingActionButton) findViewById(R.id.fabImage);
         fabComment = (FloatingActionButton) findViewById(R.id.fabComment);
-
+        if(isGuest){
+            fabButton.setVisibility(View.GONE);
+            fabImage.setVisibility(View.GONE);
+            fabComment.setVisibility(View.GONE);
+        }
         //floating action button listener
         fabButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -291,7 +319,26 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         // Return false so that we don't consume the event and the default behavior still occurs
         return false;
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_favorite) {
+//           // Toast.makeText(MainActivity.this, "Action clicked", Toast.LENGTH_LONG).show();
+//            return true;
+//        }
+
+<<<<<<< HEAD
 //    @Override
 //    public void onMyLocationClick(@NonNull Location location) {
 //        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
@@ -380,5 +427,8 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
     @Override
     public void PermissionDenied(int request_code) {
 
+=======
+        return super.onOptionsItemSelected(item);
+>>>>>>> 7502453e13cf9179ba495280e030d3a5814e6651
     }
 }

@@ -12,7 +12,11 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
+<<<<<<< HEAD
 import android.location.Location;
+=======
+import android.media.Image;
+>>>>>>> 7502453e13cf9179ba495280e030d3a5814e6651
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -55,6 +59,7 @@ public class ListActivity extends AppCompatActivity  {
     static final int DETAIL_INTENT_CONSTANT = 0;
     static final int ADD_TOILET_INTENT_CONSTANT = 1;
     FloatingActionButton fabButton;
+    private boolean isGuest;
     public ListActivity() {
         // Required empty public constructor
 
@@ -69,7 +74,9 @@ public class ListActivity extends AppCompatActivity  {
 
         //change color of status bar
         window.setStatusBarColor(getResources().getColor(android.R.color.black));
-        window.setTitle("Pooper");
+        Intent mainPgIntent = getIntent();
+        isGuest = mainPgIntent.getBooleanExtra("guest",false);
+
         toilets = new ArrayList<Toilet>();
         //find views
        // addButton = (Button) findViewById(R.id.button_add);
@@ -91,7 +98,9 @@ public class ListActivity extends AppCompatActivity  {
         adapter = new ToiletListAdapter(this, android.R.layout.simple_list_item_1,toilets);
         toiletList.setAdapter(adapter);
         fabButton = (FloatingActionButton) findViewById(R.id.listFab);
-
+        if(isGuest){
+            fabButton.setVisibility(View.GONE);
+        }
         //floating action button listener
         fabButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +114,7 @@ public class ListActivity extends AppCompatActivity  {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Toilet t = toilets.get(position);
                 Intent i = new Intent(getApplicationContext(),DetailActivity.class);
+                i.putExtra("guest",isGuest);
                 i.putExtra("toilet",t);
                 startActivity(i);
             }
@@ -192,6 +202,7 @@ public class ListActivity extends AppCompatActivity  {
             ImageView keyImage = (ImageView) convertView.findViewById(R.id.keyIconList);
             final ImageView upImage = (ImageView) convertView.findViewById(R.id.upArrow);
            final ImageView downImage = (ImageView) convertView.findViewById(R.id.downArrow);
+
             boolean accessibleBool = false;
             boolean keyBool = false;
             //step 3 -- get the new itp341.pai.sonali.a9.model data
@@ -215,8 +226,11 @@ public class ListActivity extends AppCompatActivity  {
             //SET THE IMAGE TO AN IMAGE FROM GOOGLE MAPS
             //toiletImage.setImageResource(IMAGE RESOURCE);
             toilet_points.setText(toilet.getPoints()+ " POINTS");
+            if(isGuest){
 
-
+                upImage.setVisibility(View.GONE);
+                downImage.setVisibility(View.GONE);
+            }
             upImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
