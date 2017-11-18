@@ -90,7 +90,7 @@
         tools:layout_editor_absoluteY="337dp"
         android:layout_below="@+id/passwordInputField"
         android:layout_alignStart="@+id/appName"
-        android:layout_marginTop="60dp" />
+        android:layout_marginTop="30dp" />
 
     <Button
         android:id="@+id/signUpButton"
@@ -105,6 +105,18 @@
         android:layout_alignBaseline="@+id/signInButton"
         android:layout_alignBottom="@+id/signInButton"
         android:layout_alignEnd="@+id/appName" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/guestButton"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_below="@id/signInButton"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@android:color/holo_blue_light"
+        android:text="SIGN IN AS GUEST"
+        android:textColor="@android:color/white"
+        android:textSize="15dp"></android.support.v7.widget.AppCompatButton>
 
     <TextView
         android:id="@+id/textView"
