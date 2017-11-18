@@ -46,7 +46,8 @@
             android:theme="@style/Theme.AppCompat" />
         <activity
             android:name=".DetailActivity"
-            android:label="Toilet Information"></activity>
+            android:label="Toilet Information"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".ListActivity"
             android:label="Toilets at USC" />

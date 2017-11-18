@@ -110,12 +110,14 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_toilet);
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#000000"));
-        getSupportActionBar().setBackgroundDrawable(colorDrawable);
 
+        //toolbar
         mTopToolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
-        //setSupportActionBar(mTopToolbar);
-        mTopToolbar.setNavigationIcon(R.drawable.ic_image_white_24px);
+        if(mTopToolbar != null){
+            mTopToolbar.setTitleTextColor(Color.parseColor("#ffffff"));
+            mTopToolbar.setTitle("Toilet Information");
+            mTopToolbar.setBackgroundColor(Color.parseColor("#000000"));
+        }
 
 
 
@@ -308,19 +310,6 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
         // Return false so that we don't consume the event and the default behavior still occurs
         return false;
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
     }
         //noinspection SimplifiableIfStatement
 //        if (id == R.id.action_favorite) {
