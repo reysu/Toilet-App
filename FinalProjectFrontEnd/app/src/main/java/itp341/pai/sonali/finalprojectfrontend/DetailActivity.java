@@ -103,6 +103,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
     private FusedLocationProviderClient mFusedLocationClient;
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "DetailActivity";
+    private ImageView goToGallery;
 
     private boolean isGuest;
     private Toolbar mTopToolbar;
@@ -113,11 +114,22 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
         //toolbar
         mTopToolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        goToGallery = (ImageView) findViewById(R.id.goToGallery);
         if(mTopToolbar != null){
             mTopToolbar.setTitleTextColor(Color.parseColor("#ffffff"));
             mTopToolbar.setTitle("Toilet Information");
             mTopToolbar.setBackgroundColor(Color.parseColor("#000000"));
         }
+
+        goToGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), Gallery.class);
+//                i.putExtra("toilet", t);
+                startActivity(i);
+            }
+        });
+
 
 
 
@@ -130,6 +142,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         Intent i = getIntent();
         t = (Toilet) i.getSerializableExtra("toilet");
     isGuest = i.getBooleanExtra("guest",false);
+
 
 //        bathroomId = getIntent().getIntExtra("bathroomId", -1);
 //

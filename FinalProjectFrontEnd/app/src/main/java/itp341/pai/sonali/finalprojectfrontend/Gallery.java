@@ -1,6 +1,7 @@
 package itp341.pai.sonali.finalprojectfrontend;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -63,7 +64,8 @@ public class Gallery extends AppCompatActivity {
           //  imageView.setImageResource(mThumbIds[position]);
             return imageView;
         }
-        Toilet t;
+        Intent i = getIntent();
+        Toilet t = (Toilet) i.getSerializableExtra("toilet");
         // references to our images
        // private String[] mThumbIds
     }
