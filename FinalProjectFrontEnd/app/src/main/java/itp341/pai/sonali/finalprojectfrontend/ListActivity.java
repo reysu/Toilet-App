@@ -141,13 +141,6 @@ public class ListActivity extends AppCompatActivity  {
         SearchView searchView;
 
         Window window = this.getWindow();
-//        pinPageButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
-//                startActivity(i);
-//            }
-//        });
 
         //change color of status bar
         window.setStatusBarColor(getResources().getColor(android.R.color.black));
