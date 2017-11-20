@@ -67,9 +67,7 @@ public class POST_HTTP {
             result.append("=");
             result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
         }
-
         return result.toString();
-
     }
     public void connect() throws IOException
     {
@@ -82,6 +80,10 @@ public class POST_HTTP {
 
     public String getResponse() throws IOException
     {
+        if (httpConnection.getResponseCode() != 200)
+        {
+            return "fail";
+        }
         StringBuffer output = null;
         while ((bufferedString = bufferedReader.readLine()) != null)
         {
