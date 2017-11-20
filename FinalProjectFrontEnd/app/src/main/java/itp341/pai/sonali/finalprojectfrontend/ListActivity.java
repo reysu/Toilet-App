@@ -197,21 +197,20 @@ public class ListActivity extends AppCompatActivity  {
             }
         });
     }
-    /*
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_toilet_list_fragment, container, false);
       //  final Context context = v.getContext();
         toilets = new ArrayList<Toilet>();
         //find views
-        addButton = (Button) v.findViewById(R.id.button_add);
         toiletList = (ListView)v.findViewById(R.id.toiletList);
         Toilet toilet = new Toilet("Cardinal Gardens","3131 Mcclintock Avenue",true,true);
         toilets.add(toilet);
         adapter = new ToiletListAdapter(this, android.R.layout.simple_list_item_1,toilets);
         //get all toilets close to location and load into the adapter
-        //Loction location = CURRENT LOCATION OF USER USING GOOGLE MAPS API
-    //   Location location = null; //comment this line out
+//        Loction location = CURRENT LOCATION OF USER USING GOOGLE MAPS API
+//       Location location = null; //comment this line out
 //        try {
 //            URL url = new URL("http://localhost:8080/FinalProject/BathroomGPSServlet?location=" + location);
 //            GET_HTTP get_http = new GET_HTTP(url);
@@ -223,35 +222,12 @@ public class ListActivity extends AppCompatActivity  {
 //        catch(IOException ioe){
 //            System.out.println("ioe in list activity: " + ioe.getMessage());
 //        }
-      toiletList.setAdapter(adapter);
-
-//
-//        //toilet list item click listener
-//        toiletList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//                //get the clicked bathroom's ID and pass it over to the detail activity in an intent
-//                Intent detailIntent = new Intent(context, DetailActivity.class);
-//                long id = toilets.get(position).getBathroomId();
-//                detailIntent.putExtra("bathroomId", id);
-//     //           startActivityForResult(detailIntent, DETAIL_INTENT_CONSTANT);
-//            }
-//        });
-//
-//
-//        //add button listener
-//        addButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent addToiletIntent = new Intent(context, AddToiletActivity.class);
-//    //            startActivityForResult(addToiletIntent, ADD_TOILET_INTENT_CONSTANT);
-//            }
-//        });
+     //toiletList.setAdapter(adapter);
 
         return v;
     }
 
-*/
+
     private class ToiletListAdapter extends ArrayAdapter<Toilet> {
         int pos = 0;
 
@@ -278,7 +254,7 @@ public class ListActivity extends AppCompatActivity  {
             ImageView accessibleImage = (ImageView) convertView.findViewById(R.id.accesibleIconList);
             ImageView keyImage = (ImageView) convertView.findViewById(R.id.keyIconList);
             final ImageView upImage = (ImageView) convertView.findViewById(R.id.upArrow);
-           final ImageView downImage = (ImageView) convertView.findViewById(R.id.downArrow);
+            final ImageView downImage = (ImageView) convertView.findViewById(R.id.downArrow);
 
             boolean accessibleBool = false;
             boolean keyBool = false;
