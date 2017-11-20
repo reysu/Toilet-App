@@ -76,7 +76,6 @@
         android:layout_marginStart = "220dp"
         android:layout_alignBottom="@id/toilet_points"
         android:src = "@drawable/ic_vpn_key_black_24px_"
-
         android:id="@+id/keyIconList" />
 
 </RelativeLayout>

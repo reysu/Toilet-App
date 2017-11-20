@@ -14,6 +14,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -27,6 +29,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        Window window = this.getWindow();
+        //change color of status bar
+        window.setStatusBarColor(getResources().getColor(android.R.color.black));
 
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#000000"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
