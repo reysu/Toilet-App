@@ -10,7 +10,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -48,10 +50,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -94,6 +99,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
     private Toilet t = null;
     private ImageView disabledIcon;
     private ImageView keyIcon;
+    private URI mImageUri;
     FloatingActionButton fabButton;
     FloatingActionButton fabImage;
     FloatingActionButton fabComment;
@@ -237,10 +243,12 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
             @Override
             public void onClick(View view) {
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                Uri cameraImageUri = getOutputMediaFileUri(1);
                 startActivityForResult(cameraIntent, 0);
 
             }
         });
+
 
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
@@ -335,6 +343,29 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         // Once connected with google api, get the location
 
 
+    }
+
+
+    public static Uri getOutputMediaFileUri(int type) {
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
+
+    public static File getOutputMediaFile(int type){
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_PICTURES);
+        if(!mediaStorageDir.exists()){
+            if(!mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        Date date = new java.util.Date();
+        File mediaFile;
+        if(type == 1){
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + ".jpg");
+        }
+        else {
+            return null;
+        }
+        return mediaFile;
     }
 
     @Override
