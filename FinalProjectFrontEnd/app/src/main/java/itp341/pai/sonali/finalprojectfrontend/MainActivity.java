@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             // get connection to the "SignIn" Servlet
-                            URL url = new URL("http://localhost:8080/FinalProject/SignInServlet");
+                            URL url = new URL("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/FinalProject/SignInServlet");
                             POST_HTTP post_http = new POST_HTTP(url);
                             post_http.addParameters("username", username);
                             post_http.addParameters("password", password);
@@ -117,12 +117,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-
-
-
-
-
-
                 //if exists, launch an intent to the listview page of all toilets
 
             }
@@ -148,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 //send this user to database
                 //do post
                 try {
-                    URL url = new URL("http://localhost:8080/FinalProject/UserServlet");
+                    URL url = new URL("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/FinalProject/UserServlet");
                     POST_HTTP post_http = new POST_HTTP(url);
                     post_http.addParameters("username", username);
                     post_http.addParameters("password", password);
@@ -163,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 //get response and check id
-                URL url2 = new URL("http://localhost:8080/FinalProject/SignInServlet");
+                URL url2 = new URL("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/FinalProject/SignInServlet");
                 POST_HTTP post_http2 = new POST_HTTP(url);
                 post_http2.addParameters("username", username);
                 post_http2.addParameters("password", password);
@@ -182,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        URL url3 = new URL("http://localhost:8080/FinalProject/User?userId="+userId);
+                        URL url3 = new URL("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/FinalProject/User?userId="+userId);
                         GET_HTTP get_http = new GET_HTTP(url3);
                         String userJsonValidate = get_http.getResponse();
                         Gson gson = new Gson();
@@ -199,8 +193,6 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(i);
                         }
                     }
-
-
                 }
                 catch(Exception e){
                     System.out.println("Exception in sign up button click: " + e.getMessage());
