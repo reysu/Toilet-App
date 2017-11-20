@@ -141,7 +141,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
         Intent i = getIntent();
         t = (Toilet) i.getSerializableExtra("toilet");
-    isGuest = i.getBooleanExtra("guest",false);
+        isGuest = i.getBooleanExtra("guest",false);
 
 
 //        bathroomId = getIntent().getIntExtra("bathroomId", -1);

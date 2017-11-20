@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,9 @@ public class ListActivity extends AppCompatActivity  {
     static final int ADD_TOILET_INTENT_CONSTANT = 1;
     FloatingActionButton fabButton;
     private boolean isGuest;
+    private Toolbar toolbarListActivity;
+    private ImageView pinPageButton;
+
     public ListActivity() {
         // Required empty public constructor
 
@@ -64,10 +68,26 @@ public class ListActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toilet_list_fragment);
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#000000"));
-        getSupportActionBar().setBackgroundDrawable(colorDrawable);
 
         Window window = this.getWindow();
+
+        //toolbar with navigation icons
+        //toolbar
+        toolbarListActivity = (Toolbar) findViewById(R.id.toolbar_listPage);
+        pinPageButton = (ImageView) findViewById(R.id.pinPage);
+        if(toolbarListActivity != null){
+            toolbarListActivity.setTitleTextColor(Color.parseColor("#ffffff"));
+            toolbarListActivity.setTitle("Toilets at USC");
+            toolbarListActivity.setBackgroundColor(Color.parseColor("#000000"));
+        }
+
+        pinPageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(i);
+            }
+        });
 
         //change color of status bar
         window.setStatusBarColor(getResources().getColor(android.R.color.black));

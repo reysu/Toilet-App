@@ -63,61 +63,61 @@ public class MainActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                username = usernameInput.getText().toString();
-//                password = passwordInput.getText().toString();
-//                //TO DO: send these to data base to verify if user exists
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            // get connection to the "SignIn" Servlet
-//                            URL url = new URL("http://localhost:8080/FinalProject/SignInServlet");
-//                            POST_HTTP post_http = new POST_HTTP(url);
-//                            post_http.addParameters("username", username);
-//                            post_http.addParameters("password", password);
-//                            post_http.connect();
-//
-//                            // return user JSON as the response Text. If the user does not exist, or
-//                            //if the user's credentials are not correct - return an "ERROR" string
-//
-//
-//                            String userJson = post_http.getResponse();
-//                            int userId = Integer.parseInt(userJson);
-//
-//
-//                            if (userId==-1)
-//                            {
-//                                //To-Do: show error messages
-//                                Toast.makeText(getApplicationContext(), "Username and/or password are incorrect", Toast.LENGTH_LONG).show();
-//                            }
-//                            else
-//                            {
-//                                URL url2 = new URL("http://localhost:8080/FinalProject/User?userId="+userId);
-//                                GET_HTTP get_http = new GET_HTTP(url2);
-//                                String userJsonValidate = get_http.getResponse();
-//                                Gson gson = new Gson();
-//                                User user = gson.fromJson(userJsonValidate, User.class);
-//                                if(user == null){
-//                                    Toast.makeText(getApplicationContext(), "ERROR THAT SHOULD NEVER HAPPEN", Toast.LENGTH_LONG).show();
-//                                }
-//                                else {
-//                                    SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
-//                                    editor.putString(USERNAME, username);
-//                                    editor.putInt(USERID, userId);
-//                                    Intent i = new Intent(getApplicationContext(), ListActivity.class);
-//                                    i.putExtra("guest",false);
-//                                    startActivity(i);
-//                                    }
-//                            }
-//
-//                        }catch (Exception e)
-//                        {
-//                            Log.d("Exception", e.toString());
-//                        }
-//                    }
-//                });
-//
-//
+                username = usernameInput.getText().toString();
+                password = passwordInput.getText().toString();
+                //TO DO: send these to data base to verify if user exists
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            // get connection to the "SignIn" Servlet
+                            URL url = new URL("http://localhost:8080/FinalProject/SignInServlet");
+                            POST_HTTP post_http = new POST_HTTP(url);
+                            post_http.addParameters("username", username);
+                            post_http.addParameters("password", password);
+                            post_http.connect();
+
+                            // return user JSON as the response Text. If the user does not exist, or
+                            //if the user's credentials are not correct - return an "ERROR" string
+
+
+                            String userJson = post_http.getResponse();
+                            int userId = Integer.parseInt(userJson);
+
+
+                            if (userId==-1)
+                            {
+                                //To-Do: show error messages
+                                Toast.makeText(getApplicationContext(), "Username and/or password are incorrect", Toast.LENGTH_LONG).show();
+                            }
+                            else
+                            {
+                                URL url2 = new URL("http://localhost:8080/FinalProject/User?userId="+userId);
+                                GET_HTTP get_http = new GET_HTTP(url2);
+                                String userJsonValidate = get_http.getResponse();
+                                Gson gson = new Gson();
+                                User user = gson.fromJson(userJsonValidate, User.class);
+                                if(user == null){
+                                    Toast.makeText(getApplicationContext(), "ERROR THAT SHOULD NEVER HAPPEN", Toast.LENGTH_LONG).show();
+                                }
+                                else {
+                                    SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+                                    editor.putString(USERNAME, username);
+                                    editor.putInt(USERID, userId);
+                                    Intent i = new Intent(getApplicationContext(), ListActivity.class);
+                                    i.putExtra("guest",false);
+                                    startActivity(i);
+                                    }
+                            }
+
+                        }catch (Exception e)
+                        {
+                            Log.d("Exception", e.toString());
+                        }
+                    }
+                });
+
+
 
 
 
