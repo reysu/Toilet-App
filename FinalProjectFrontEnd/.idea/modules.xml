@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FinalProjectFrontEnd.iml" filepath="$PROJECT_DIR$/FinalProjectFrontEnd.iml" />
-      <module fileurl="file://C:\Users\Chuan\Dropbox\Fall2017\git_clone\Toilet-App\FinalProjectFrontEnd\app\FinalProjectFrontEnd-app.iml" filepath="C:\Users\Chuan\Dropbox\Fall2017\git_clone\Toilet-App\FinalProjectFrontEnd\app\FinalProjectFrontEnd-app.iml" />
-      <module fileurl="file://C:\Users\Chuan\Dropbox\Fall2017\git_clone\Toilet-App\FinalProjectFrontEnd\Toilet-App-FinalProjectFrontEnd.iml" filepath="C:\Users\Chuan\Dropbox\Fall2017\git_clone\Toilet-App\FinalProjectFrontEnd\Toilet-App-FinalProjectFrontEnd.iml" />
+      <module fileurl="file://C:\Users\Chuan\Dropbox\Chuan\Dropbox\Fall2017\git_clone\Toilet-App\FinalProjectFrontEnd\app\FinalProjectFrontEnd-app.iml" filepath="C:\Users\Chuan\Dropbox\Chuan\Dropbox\Fall2017\git_clone\Toilet-App\FinalProjectFrontEnd\app\FinalProjectFrontEnd-app.iml" />
+      <module fileurl="file://C:\Users\Chuan\Dropbox\Chuan\Dropbox\Fall2017\git_clone\Toilet-App\FinalProjectFrontEnd\Toilet-App-FinalProjectFrontEnd.iml" filepath="C:\Users\Chuan\Dropbox\Chuan\Dropbox\Fall2017\git_clone\Toilet-App\FinalProjectFrontEnd\Toilet-App-FinalProjectFrontEnd.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

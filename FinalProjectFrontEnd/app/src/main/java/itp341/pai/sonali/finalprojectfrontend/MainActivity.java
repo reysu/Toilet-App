@@ -15,6 +15,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import java.net.URL;
 
@@ -71,21 +74,26 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             // get connection to the "SignIn" Servlet
-                            URL url = new URL(ENDPOINT + "login?username="+username+"&password="+password);
-                            POST_HTTP post_http = new POST_HTTP(url);
+                            OkHttpClient client = new OkHttpClient();
+                            Request request = new Request.Builder()
+                                    .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/login?username=" + username + "&password=" + password)
+                                    .post(null)
+                                    .addHeader("cache-control", "no-cache")
+                                    .addHeader("postman-token", "4b8727f2-cb4d-a0ee-53e6-ac16fa4bd79f")
+                                    .build();
 
-                            post_http.connect();
-
+                            Response response = client.newCall(request).execute();
                             // return user JSON as the response Text. If the user does not exist, or
                             //if the user's credentials are not correct - return an "ERROR" string
 
-                            String userJson = post_http.getResponse();
-                            if (userJson.equals("fail"))
+                            if (response.code() != 200)
                             {
                                 Toast.makeText(getApplicationContext(), "Username and/or password are incorrect", Toast.LENGTH_LONG).show();
                             }
                             else
                             {
+                                String userJson = response.body().toString();
+
                                 Gson gson = new Gson();
                                 User user = gson.fromJson(userJson, User.class);
 
@@ -135,27 +143,38 @@ public class MainActivity extends AppCompatActivity {
                 //send this user to database
                 //do post
                 try {
-                    URL url = new URL(ENDPOINT + "register?username="+username+"&password="+password);
-                    POST_HTTP post_http = new POST_HTTP(url);
-                    post_http.connect();
-                    String response = post_http.getResponse();
-                    if(response.equals("fail")){
+                    OkHttpClient client = new OkHttpClient();
+
+                    Request request = new Request.Builder()
+                            .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/register?username=" + username + "&password=" + password)
+                            .post(null)
+                            .addHeader("cache-control", "no-cache")
+                            .addHeader("postman-token", "bdaea399-4210-38b7-db13-e9a287151998")
+                            .build();
+                    Response response = client.newCall(request).execute();
+
+                    if(response.code() != 200){
                         //To-Do: show error messages
                         Toast.makeText(getApplicationContext(), "Choose a different username", Toast.LENGTH_LONG).show();
                     }
                     else{
                         //get response and check id
-                        URL url3 = new URL(ENDPOINT + "login?username="+username+"&password="+password);
-                        POST_HTTP post_http3 = new POST_HTTP(url3);
-                        post_http3.connect();
-                        String userJson = post_http3.getResponse();
-                        if (userJson.equals("fail"))
+                        client = new OkHttpClient();
+                        request = new Request.Builder()
+                                .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/login?username=" + username + "&password=" + password)
+                                .post(null)
+                                .addHeader("cache-control", "no-cache")
+                                .addHeader("postman-token", "4b8727f2-cb4d-a0ee-53e6-ac16fa4bd79f")
+                                .build();
+
+                         response = client.newCall(request).execute();
+                        if (response.code() != 200)
                         {
                             Toast.makeText(getApplicationContext(), "Username and/or password are incorrect", Toast.LENGTH_LONG).show();
                         }
                         else
                         {
-                            String userJsonValidate = post_http3.getResponse();
+                            String userJsonValidate = response.body().toString();
                             Gson gson = new Gson();
                             User newUser = gson.fromJson(userJsonValidate, User.class);
                             if(newUser == null){
