@@ -277,7 +277,10 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         //double lat = 34.0224, lng = 118.2851; //lat and lng of USC
         double lat = t.getLatitude();
         double lng = t.getLongitude();
-
+        LatLng coordinate = new LatLng(lat,lng);
+        CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
+                coordinate, 16);
+        mMap.animateCamera(location);
         googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(lat, lng))
                 .title("Toilet"));
