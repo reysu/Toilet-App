@@ -2,6 +2,7 @@ package itp341.pai.sonali.finalprojectfrontend.model;
 
 import android.location.Location;
 import android.media.Image;
+import android.provider.ContactsContract;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class Toilet implements Serializable{
         downArrowSelected=false;
         comments = new ArrayList<String>();
     }
+
 
     public boolean isUpArrowSelected() {
         return upArrowSelected;
