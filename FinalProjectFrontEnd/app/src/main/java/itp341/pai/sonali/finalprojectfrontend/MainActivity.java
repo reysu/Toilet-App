@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     //final variables
     public static final String USERNAME = "";
     public static final String USERID = "";
-
+    private static final String ENDPOINT = "http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/";
     //declare widgets
     private EditText usernameInput;
     private EditText passwordInput;
@@ -71,36 +71,29 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             // get connection to the "SignIn" Servlet
-                            URL url = new URL("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/FinalProject/SignInServlet");
+                            URL url = new URL(ENDPOINT + "login?username="+username+"&password="+password);
                             POST_HTTP post_http = new POST_HTTP(url);
-                            post_http.addParameters("username", username);
-                            post_http.addParameters("password", password);
+
                             post_http.connect();
 
                             // return user JSON as the response Text. If the user does not exist, or
                             //if the user's credentials are not correct - return an "ERROR" string
 
-
                             String userJson = post_http.getResponse();
-                            int userId = Integer.parseInt(userJson);
-
-
-                            if (userId==-1)
+                            if (userJson.equals("fail"))
                             {
-                                //To-Do: show error messages
                                 Toast.makeText(getApplicationContext(), "Username and/or password are incorrect", Toast.LENGTH_LONG).show();
                             }
                             else
                             {
-                                URL url2 = new URL("http://localhost:8080/FinalProject/User?userId="+userId);
-                                GET_HTTP get_http = new GET_HTTP(url2);
-                                String userJsonValidate = get_http.getResponse();
                                 Gson gson = new Gson();
-                                User user = gson.fromJson(userJsonValidate, User.class);
+                                User user = gson.fromJson(userJson, User.class);
+
                                 if(user == null){
                                     Toast.makeText(getApplicationContext(), "ERROR THAT SHOULD NEVER HAPPEN", Toast.LENGTH_LONG).show();
                                 }
                                 else {
+                                    int userId = user.getId();
                                     SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
                                     editor.putString(USERNAME, username);
                                     editor.putInt(USERID, userId);
@@ -142,58 +135,52 @@ public class MainActivity extends AppCompatActivity {
                 //send this user to database
                 //do post
                 try {
-                    URL url = new URL("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/FinalProject/UserServlet");
+                    URL url = new URL(ENDPOINT + "register?username="+username+"&password="+password);
                     POST_HTTP post_http = new POST_HTTP(url);
-                    post_http.addParameters("username", username);
-                    post_http.addParameters("password", password);
                     post_http.connect();
-
                     String response = post_http.getResponse();
-                    if(response.equals("ERROR")){
+                    if(response.equals("fail")){
                         //To-Do: show error messages
                         Toast.makeText(getApplicationContext(), "Choose a different username", Toast.LENGTH_LONG).show();
                     }
                     else{
+                        //get response and check id
+                        URL url3 = new URL(ENDPOINT + "login?username="+username+"&password="+password);
+                        POST_HTTP post_http3 = new POST_HTTP(url3);
+                        post_http3.connect();
+                        String userJson = post_http3.getResponse();
+                        if (userJson.equals("fail"))
+                        {
+                            Toast.makeText(getApplicationContext(), "Username and/or password are incorrect", Toast.LENGTH_LONG).show();
+                        }
+                        else
+                        {
+                            String userJsonValidate = post_http3.getResponse();
+                            Gson gson = new Gson();
+                            User newUser = gson.fromJson(userJsonValidate, User.class);
+                            if(newUser == null){
+                                Toast.makeText(getApplicationContext(), "ERROR THAT SHOULD NEVER HAPPEN", Toast.LENGTH_LONG).show();
+                            }
+                            else {
+                                int userId = newUser.getId();
+                                SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+                                editor.putString(USERNAME, username);
+                                editor.putInt(USERID, userId);
+                                Toast.makeText(getApplicationContext(), "Username and/or password are incorrect", Toast.LENGTH_LONG).show();
 
+                                Intent i = new Intent(getApplicationContext(), ListActivity.class);
+                                i.putExtra("guest",false);
+                                startActivity(i);
+                            }
+                        }
                     }
-                //get response and check id
-                URL url2 = new URL("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/FinalProject/SignInServlet");
-                POST_HTTP post_http2 = new POST_HTTP(url);
-                post_http2.addParameters("username", username);
-                post_http2.addParameters("password", password);
-                post_http2.connect();
 
                 // return user JSON as the response Text. If the user does not exist, or
                 //if the user's credentials are not correct - return an "ERROR" string
 
 
-                String userJson = post_http2.getResponse();
-                int userId = Integer.parseInt(userJson);
-                    if (userId==-1)
-                    {
-                        //To-Do: show error messages
-                        Toast.makeText(getApplicationContext(), "Username and/or password are incorrect", Toast.LENGTH_LONG).show();
-                    }
-                    else
-                    {
-                        URL url3 = new URL("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/FinalProject/User?userId="+userId);
-                        GET_HTTP get_http = new GET_HTTP(url3);
-                        String userJsonValidate = get_http.getResponse();
-                        Gson gson = new Gson();
-                        User newUser = gson.fromJson(userJsonValidate, User.class);
-                        if(newUser == null){
-                            Toast.makeText(getApplicationContext(), "ERROR THAT SHOULD NEVER HAPPEN", Toast.LENGTH_LONG).show();
-                        }
-                        else {
-                            SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
-                            editor.putString(USERNAME, username);
-                            editor.putInt(USERID, userId);
-                            Intent i = new Intent(getApplicationContext(), ListActivity.class);
-                            i.putExtra("guest",false);
-                            startActivity(i);
-                        }
-                    }
-                }
+
+                 }
                 catch(Exception e){
                     System.out.println("Exception in sign up button click: " + e.getMessage());
                 }
