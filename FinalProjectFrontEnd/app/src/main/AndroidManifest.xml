@@ -50,8 +50,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".ListActivity"
-            android:label="Toilets at USC"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:label="Toilets at USC" />
         <activity
             android:name=".CommentActivity"
             android:label="Leave a Comment" />

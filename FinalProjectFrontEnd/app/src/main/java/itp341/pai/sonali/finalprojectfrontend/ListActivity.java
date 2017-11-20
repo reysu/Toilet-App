@@ -20,8 +20,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -38,7 +42,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.widget.Toast;
 
 //import javax.xml.stream.Location;
 
@@ -58,36 +66,88 @@ public class ListActivity extends AppCompatActivity  {
     static final int ADD_TOILET_INTENT_CONSTANT = 1;
     FloatingActionButton fabButton;
     private boolean isGuest;
-    private Toolbar toolbarListActivity;
     private ImageView pinPageButton;
 
     public ListActivity() {
         // Required empty public constructor
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.sort_menu, menu);
+        SearchView searchView;
+
+        MenuItem searchItem = menu.findItem(R.id.searchButton);
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
+        MenuItem.OnActionExpandListener expandListener = new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                return false;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                refresh();
+                return false;
+            }
+        };
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    //listener to navigate to the pins page, and the sorting functions
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.location_sort:
+                //make a call to the server to get a list of toilets sorted by location
+                //toilets = WHATEVER SERVER GIVES US;
+                refresh();
+                return true;
+            case R.id.points_sort:
+                //make a call to the server to get a list of toilets sorted by points
+                //toilets = WHATEVER SERVER GIVES US;
+                refresh();
+                return true;
+            case R.id.pin:
+                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(i);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toilet_list_fragment);
+        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#000000"));
+        getSupportActionBar().setBackgroundDrawable(colorDrawable);
+
+        SearchView searchView;
 
         Window window = this.getWindow();
-
-        //toolbar with navigation icons
-        //toolbar
-        toolbarListActivity = (Toolbar) findViewById(R.id.toolbar_listPage);
-        pinPageButton = (ImageView) findViewById(R.id.pinPage);
-        if(toolbarListActivity != null){
-            toolbarListActivity.setTitleTextColor(Color.parseColor("#ffffff"));
-            toolbarListActivity.setTitle("Toilets at USC");
-            toolbarListActivity.setBackgroundColor(Color.parseColor("#000000"));
-        }
-
-        pinPageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
-                startActivity(i);
-            }
-        });
+//        pinPageButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
+//                startActivity(i);
+//            }
+//        });
 
         //change color of status bar
         window.setStatusBarColor(getResources().getColor(android.R.color.black));
