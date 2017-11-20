@@ -79,7 +79,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Marker k = mMap.addMarker(new MarkerOptions().position(pins.get(i)).title("Toilet" + i));
             markerIdToiletMap.put(k.getId(), toilet);
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(USC));
+        CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
+                USC, 15);
+        mMap.animateCamera(location);
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener()   {
             @Override
             public void onInfoWindowClick(Marker marker) {
