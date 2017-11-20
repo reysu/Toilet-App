@@ -88,7 +88,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onInfoWindowClick(Marker marker) {
 
                 Toilet m = markerIdToiletMap.get(marker.getId());
-                Intent i = new Intent(getApplicationContext(), DetailActivity.class);
+                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
                 i.putExtra("toilet",m);
                 startActivity(i);
             }
