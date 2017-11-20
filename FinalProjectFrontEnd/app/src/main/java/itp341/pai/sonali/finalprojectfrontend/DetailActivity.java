@@ -130,9 +130,6 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
             }
         });
 
-
-
-
         Window window = this.getWindow();
 
         //change color of status bar
@@ -289,7 +286,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
     @Override
     public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
 
         ArrayList<String> permissions=new ArrayList<>();
         PermissionUtils permissionUtils;
@@ -327,16 +324,6 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         // Return false so that we don't consume the event and the default behavior still occurs
         return false;
     }
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_favorite) {
-//           // Toast.makeText(MainActivity.this, "Action clicked", Toast.LENGTH_LONG).show();
-//            return true;
-//        }
-
-//    @Override
-//    public void onMyLocationClick(@NonNull Location location) {
-//        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
-//    }
 
     @Override
     public void onConnectionFailed(ConnectionResult result) {
