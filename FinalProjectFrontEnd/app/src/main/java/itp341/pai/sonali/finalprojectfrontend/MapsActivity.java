@@ -110,6 +110,9 @@ public class MapsActivity extends AppCompatActivity implements GoogleApiClient.O
             Marker k = mMap.addMarker(new MarkerOptions().position(pins.get(i)).title("Toilet" + i));
             markerIdToiletMap.put(k.getId(), toilet);
         }
+        mMap.setOnMyLocationButtonClickListener(this);
+        enableMyLocation();
+
         CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
                 USC, 15);
         mMap.animateCamera(location);

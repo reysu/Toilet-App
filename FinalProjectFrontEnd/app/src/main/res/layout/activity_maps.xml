@@ -5,4 +5,9 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="itp341.pai.sonali.finalprojectfrontend.MapsActivity" />
+    tools:context="itp341.pai.sonali.finalprojectfrontend.MapsActivity"
+    map:uiRotateGestures="true"
+    map:uiScrollGestures="true"
+    map:uiTiltGestures="true"
+    map:uiZoomControls="true"
+    map:uiZoomGestures="true"/>
