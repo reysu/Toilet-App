@@ -15,13 +15,17 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 
 
+import java.io.IOException;
 import java.net.URL;
 
 import itp341.pai.sonali.finalprojectfrontend.model.GET_HTTP;
@@ -71,38 +75,31 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 username = usernameInput.getText().toString();
                 password = passwordInput.getText().toString();
-                Thread thread = new Thread(new Runnable() {
-
+                //get connection to the "SignIn" Servlet
+                OkHttpClient client = new OkHttpClient();
+                RequestBody formBody = new FormEncodingBuilder().add("username", username).add("password", password).build();
+                Request request = new Request.Builder()
+                        .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/login")
+                        .post(formBody)
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
                     @Override
-                    public void run() {
-                        //TO DO: send these to data base to verify if user exists
-                        try {
-                            // get connection to the "SignIn" Servlet
-                       //     Toast.makeText(getApplicationContext(), "in Try block", Toast.LENGTH_LONG).show();
-                            OkHttpClient client = new OkHttpClient();
-                            RequestBody formBody = new FormEncodingBuilder().add("username", username).add("password",password).build();
-//                            formBody.addQueryParameter("password", password);
-
-                            Request request = new Request.Builder()
-                                    .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/login")
-                                    .post(formBody)
-                                    .build();
-
-                            Response response = client.newCall(request).execute();
-                            // return user JSON as the response Text. If the user does not exist, or
-                            //if the user's credentials are not correct - return an "ERROR" string
-                          //  Toast.makeText(getApplicationContext(), "Response Received", Toast.LENGTH_LONG).show();
-                            if (response.code() != 200) {
-                            //    Toast.makeText(getApplicationContext(), "Username and/or password are incorrect", Toast.LENGTH_LONG).show();
+                    public void onFailure(Request request, IOException e) {
+                        e.printStackTrace();
+                    }
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        try (ResponseBody responseBody = response.body()) {
+                            if (!response.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Username and/or password are incorrect", Toast.LENGTH_LONG).show();
                             } else {
-
                                 String userJson = response.body().string();
 
                                 System.out.println(userJson);
                                 Gson gson = new Gson();
                                 User user = gson.fromJson(userJson, User.class);
                                 if (user == null) {
-                               //     Toast.makeText(getApplicationContext(), "ERROR THAT SHOULD NEVER HAPPEN", Toast.LENGTH_LONG).show();
+                                    //     Toast.makeText(getApplicationContext(), "ERROR THAT SHOULD NEVER HAPPEN", Toast.LENGTH_LONG).show();
                                 } else {
                                     int userId = user.getId();
                                     SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
@@ -113,18 +110,14 @@ public class MainActivity extends AppCompatActivity {
                                     startActivity(i);
                                 }
                             }
-
-                        } catch (Exception e) {
-                            Log.d("Exception", e.toString());
                         }
                     }
                 });
-                thread.start();
-            }
-
+                //return user JSON as the response Text. If the user does not exist, or
+                //if the user's credentials are not correct - return an "ERROR" string
                 //if exists, launch an intent to the listview page of all toilets
 
-
+            }
         });
         //listener for guest button
         guestButton.setOnClickListener(new View.OnClickListener() {
@@ -144,33 +137,28 @@ public class MainActivity extends AppCompatActivity {
                 username = usernameInput.getText().toString();
                 password = passwordInput.getText().toString();
                 User user = new User(username, password);
-                //send this user to database
-                //do post
-                Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run () {
-                    try {
-                        OkHttpClient client = new OkHttpClient();
-                        RequestBody formBody = new FormEncodingBuilder().add("username", username).add("password",password).build();
-//                            formBody.addQueryParameter("password", password);
+                //send this user to database  - doPost
+                OkHttpClient client = new OkHttpClient();
+                RequestBody formBody = new FormEncodingBuilder().add("username", username).add("password",password).build();
+                Request request = new Request.Builder()
+                        .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/register")
+                        .post(formBody)
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        e.printStackTrace();
+                    }
 
-                        Request request = new Request.Builder()
-                                .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/register")
-                                .post(formBody)
-                                .build();
-
-                        Response response = client.newCall(request).execute();
-
-                        if (response.code() != 200) {
-                            //To-Do: show error messages
-                            //Toast.makeText(getApplicationContext(), "Choose a different username", Toast.LENGTH_LONG).show();
-                        } else {
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        try (ResponseBody responseBody = response.body()) {
+                            if(!response.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Choose a different username", Toast.LENGTH_LONG).show();
+                            }else {
                                 String userJsonValidate = response.body().toString();
                                 Gson gson = new Gson();
                                 User newUser = gson.fromJson(userJsonValidate, User.class);
-                                if (newUser == null) {
-                          //          Toast.makeText(getApplicationContext(), "ERROR THAT SHOULD NEVER HAPPEN", Toast.LENGTH_LONG).show();
-                                } else {
                                     int userId = newUser.getId();
                                     SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
                                     editor.putString(USERNAME, username);
@@ -179,24 +167,10 @@ public class MainActivity extends AppCompatActivity {
                                     i.putExtra("guest", false);
                                     startActivity(i);
                                 }
-
+                            }
                         }
-
-                        // return user JSON as the response Text. If the user does not exist, or
-                        //if the user's credentials are not correct - return an "ERROR" string
-
-
-                    } catch (Exception e) {
-                        System.out.println("Exception in sign up button click: " + e.getMessage());
-                    }
+                    });
                 }
-
             });
-            thread.start();
-            }
-
-        });
-
-
     }
 }
