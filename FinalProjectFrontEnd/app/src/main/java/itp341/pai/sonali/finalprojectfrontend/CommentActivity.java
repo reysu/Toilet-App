@@ -64,7 +64,7 @@ public class CommentActivity extends AppCompatActivity{
                 OkHttpClient client = new OkHttpClient();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 int userId = prefs.getInt("USERID", -1);; //the current user adding comment
-                Comment newComment = null; //new Comment(0, Integer.parseInt(commentText),userId, (int) t.getBathroomId());
+                Comment newComment = new Comment("", commentText,userId, (int) t.getBathroomId());
                 String json = new GsonBuilder().create().toJson(newComment, Comment.class);
                 try {
                     RequestBody body =  RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
