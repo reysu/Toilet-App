@@ -12,11 +12,26 @@
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="200dp">
-            <fragment
-                android:id="@+id/fetchaddressMap"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:map="http://schemas.android.com/apk/res-auto"
+                android:name="com.google.android.gms.maps.MapFragment"
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                map:mapType="normal"
+                map:uiCompass="false"
+                map:uiRotateGestures="true"
+                map:uiScrollGestures="true"
+                map:uiTiltGestures="true"
+                map:uiZoomControls="true"
+                map:uiZoomGestures="true"
+                map:cameraBearing="0"
+                map:cameraTilt="0"
+                map:cameraZoom="15"
+                map:cameraTargetLat="34.0224"
+                map:cameraTargetLng="-118.2851"
+
+                />
         </FrameLayout>
 
 
