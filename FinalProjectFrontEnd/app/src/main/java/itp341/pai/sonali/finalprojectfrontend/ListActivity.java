@@ -7,6 +7,7 @@ package itp341.pai.sonali.finalprojectfrontend;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -15,6 +16,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -37,8 +39,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +63,7 @@ import android.widget.Toast;
 
 import itp341.pai.sonali.finalprojectfrontend.model.GET_HTTP;
 import itp341.pai.sonali.finalprojectfrontend.model.Toilet;
+import itp341.pai.sonali.finalprojectfrontend.model.User;
 //import sun.applet.Main;
 
 
@@ -165,8 +177,47 @@ public class ListActivity extends AppCompatActivity  {
         toilets.add(toilet3);
         toilets.add(toilet4);
         toilets.add(toilet5);
-        adapter = new ToiletListAdapter(this, android.R.layout.simple_list_item_1,toilets);
-        toiletList.setAdapter(adapter);
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/bathroom")
+                .get()
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Response  response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if(!response.isSuccessful()) {
+
+                    }else {
+                        String toiletJson = response.body().string();
+                        Gson gson = new Gson();
+                        Type targetClassType = new TypeToken<ArrayList<Toilet>>(){}.getType();
+                        List<Toilet> toiletstemp = gson.fromJson(toiletJson,targetClassType);
+                        System.out.println(toiletstemp.get(0).getNameOfLocation());
+                        toilets.add(toiletstemp.get(0));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter = new ToiletListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1,toilets);
+                                toiletList.setAdapter(adapter);
+                            }
+                        });
+
+
+//                        adapter = new ToiletListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1,toilets);
+
+                    }
+                }
+            }
+        });
+
+     //   adapter = new ToiletListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1,toilets);
+     //   toiletList.setAdapter(adapter);
         fabButton = (FloatingActionButton) findViewById(R.id.listFab);
         fabButton.show();
         if(isGuest){
@@ -184,44 +235,50 @@ public class ListActivity extends AppCompatActivity  {
         });
         toiletList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Toilet t = toilets.get(position);
-                Intent i = new Intent(getApplicationContext(),DetailActivity.class);
-                i.putExtra("guest",isGuest);
-                i.putExtra("toilet",t);
-                startActivity(i);
+            public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toilet t = toilets.get(position);
+                        Intent i = new Intent(getApplicationContext(),DetailActivity.class);
+                        i.putExtra("guest",isGuest);
+                        i.putExtra("toilet",t);
+                        startActivity(i);
+                    }
+                });
+
             }
         });
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_toilet_list_fragment, container, false);
-      //  final Context context = v.getContext();
-        toilets = new ArrayList<Toilet>();
-        //find views
-        toiletList = (ListView)v.findViewById(R.id.toiletList);
-        Toilet toilet = new Toilet("Cardinal Gardens","3131 Mcclintock Avenue",true,true);
-        toilets.add(toilet);
-        adapter = new ToiletListAdapter(this, android.R.layout.simple_list_item_1,toilets);
-        //get all toilets close to location and load into the adapter
-//        Loction location = CURRENT LOCATION OF USER USING GOOGLE MAPS API
-//       Location location = null; //comment this line out
-//        try {
-//            URL url = new URL("http://localhost:8080/FinalProject/BathroomGPSServlet?location=" + location);
-//            GET_HTTP get_http = new GET_HTTP(url);
-//            String toiletList = get_http.getResponse();
-//            Gson gson = new Gson();
-//            toilets = (List<Toilet>) gson.fromJson(toiletList, Toilet.class);
-//            adapter = new ToiletListAdapter(v.getContext(), R.layout.activity_listtoilets, toilets);
-//        }
-//        catch(IOException ioe){
-//            System.out.println("ioe in list activity: " + ioe.getMessage());
-//        }
-     //toiletList.setAdapter(adapter);
-
-        return v;
-    }
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//        View v = inflater.inflate(R.layout.activity_toilet_list_fragment, container, false);
+//      //  final Context context = v.getContext();
+//        toilets = new ArrayList<Toilet>();
+//        //find views
+//        toiletList = (ListView)v.findViewById(R.id.toiletList);
+//        Toilet toilet = new Toilet("Cardinal Gardens","3131 Mcclintock Avenue",true,true);
+//        toilets.add(toilet);
+//        adapter = new ToiletListAdapter(this, android.R.layout.simple_list_item_1,toilets);
+//        //get all toilets close to location and load into the adapter
+////        Loction location = CURRENT LOCATION OF USER USING GOOGLE MAPS API
+////       Location location = null; //comment this line out
+////        try {
+////            URL url = new URL("http://localhost:8080/FinalProject/BathroomGPSServlet?location=" + location);
+////            GET_HTTP get_http = new GET_HTTP(url);
+////            String toiletList = get_http.getResponse();
+////            Gson gson = new Gson();
+////            toilets = (List<Toilet>) gson.fromJson(toiletList, Toilet.class);
+////            adapter = new ToiletListAdapter(v.getContext(), R.layout.activity_listtoilets, toilets);
+////        }
+////        catch(IOException ioe){
+////            System.out.println("ioe in list activity: " + ioe.getMessage());
+////        }
+//     //toiletList.setAdapter(adapter);
+//
+//        return v;
+//    }
 
 
     private class ToiletListAdapter extends ArrayAdapter<Toilet> {
@@ -342,6 +399,17 @@ public class ListActivity extends AppCompatActivity  {
         adapter.notifyDataSetChanged();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                refresh();
+            }
+        });
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }
 
 
