@@ -16,10 +16,22 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 import itp341.pai.sonali.finalprojectfrontend.model.POST_HTTP;
 import itp341.pai.sonali.finalprojectfrontend.model.Toilet;
+
+import static android.R.attr.id;
+import static android.R.attr.name;
 
 public class AddToiletActivity extends AppCompatActivity {
 
@@ -93,19 +105,35 @@ public class AddToiletActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String locName = locationName.getText().toString();
                 String address = addressField.getText().toString();
-                Toilet toilet = new Toilet(locName, address, disabledAccessbool, requiresKeybool);
+                double longitude = 20;
+                double latitude = 20;
+                Toilet t = new Toilet(locName, address, disabledAccessbool, requiresKeybool);
+                t.setLatitude(latitude);
+                t.setLongitude(longitude);
+                OkHttpClient client = new OkHttpClient();
+                String json = new GsonBuilder().create().toJson(t, Toilet.class);
                 try {
-                    URL url = new URL("http://localhost:8080/FinalProject/BathroomServlet");
-                    POST_HTTP post_http = new POST_HTTP(url);
-                  //  post_http.addParameters("toilet",toilet);
-                }catch(Exception ie){
+                    RequestBody formBody = new FormEncodingBuilder().add("toilet", json).build();
 
+                    Request request = new Request.Builder()
+                            .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/bathroom")
+                            .post(formBody)
+                            .build();
+
+                    Response response = client.newCall(request).execute();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 setResult(Activity.RESULT_OK);
                 finish();
             }
         });
 
+
+
     }
+
 
 }
