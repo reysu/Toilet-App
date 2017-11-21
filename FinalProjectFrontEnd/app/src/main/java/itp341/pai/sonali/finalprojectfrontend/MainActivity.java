@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -48,6 +50,15 @@ public class MainActivity extends AppCompatActivity {
     private String username;
     private String password;
 
+    private final Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            if(msg.arg1 == 1)   //password incorrect
+                Toast.makeText(getApplicationContext(),"Username or Password Incorrect", Toast.LENGTH_LONG).show();
+            if(msg.arg1 == 2)   //password incorrect
+                Toast.makeText(getApplicationContext(),"Username Exists", Toast.LENGTH_LONG).show();
+
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +102,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Response response) throws IOException {
                         try (ResponseBody responseBody = response.body()) {
                             if (!response.isSuccessful()) {
-                                Toast.makeText(getApplicationContext(), "Username and/or password are incorrect", Toast.LENGTH_LONG).show();
+                                Message msg = handler.obtainMessage();
+                                msg.arg1 = 1;
+                                handler.sendMessage(msg);
                             } else {
                                 String userJson = response.body().string();
 
@@ -154,23 +167,25 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Response response) throws IOException {
                         try (ResponseBody responseBody = response.body()) {
                             if(!response.isSuccessful()) {
-                                Toast.makeText(getApplicationContext(), "Choose a different username", Toast.LENGTH_LONG).show();
+                                Message msg = handler.obtainMessage();
+                                msg.arg1 = 2;
+                                handler.sendMessage(msg);
                             }else {
-                                String userJsonValidate = response.body().toString();
+                                String userJsonValidate = response.body().string();
                                 Gson gson = new Gson();
                                 User newUser = gson.fromJson(userJsonValidate, User.class);
-                                    int userId = newUser.getId();
-                                    SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
-                                    editor.putString(USERNAME, username);
-                                    editor.putInt(USERID, userId);
-                                    Intent i = new Intent(getApplicationContext(), ListActivity.class);
-                                    i.putExtra("guest", false);
-                                    startActivity(i);
-                                }
+                                int userId = newUser.getId();
+                                SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+                                editor.putString(USERNAME, username);
+                                editor.putInt(USERID, userId);
+                                Intent i = new Intent(getApplicationContext(), ListActivity.class);
+                                i.putExtra("guest", false);
+                                startActivity(i);
                             }
                         }
-                    });
-                }
-            });
+                    }
+                });
+            }
+        });
     }
 }
