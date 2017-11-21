@@ -168,8 +168,11 @@ public class ListActivity extends AppCompatActivity  {
         adapter = new ToiletListAdapter(this, android.R.layout.simple_list_item_1,toilets);
         toiletList.setAdapter(adapter);
         fabButton = (FloatingActionButton) findViewById(R.id.listFab);
+        fabButton.show();
         if(isGuest){
             fabButton.setVisibility(View.GONE);
+        }else{
+            fabButton.show();
         }
         //floating action button listener
         fabButton.setOnClickListener(new View.OnClickListener() {
