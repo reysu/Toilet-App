@@ -2,11 +2,14 @@ package itp341.pai.sonali.finalprojectfrontend;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -15,13 +18,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -29,6 +37,7 @@ import java.net.URL;
 
 import itp341.pai.sonali.finalprojectfrontend.model.POST_HTTP;
 import itp341.pai.sonali.finalprojectfrontend.model.Toilet;
+import itp341.pai.sonali.finalprojectfrontend.model.User;
 
 import static android.R.attr.id;
 import static android.R.attr.name;
@@ -46,6 +55,16 @@ public class AddToiletActivity extends AppCompatActivity {
     //private datamembers
     boolean disabledAccessbool = false;
     boolean requiresKeybool = false;
+
+    private final Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            if(msg.arg1 == 1)   //password incorrect
+                Toast.makeText(getApplicationContext(),"All fields not provided", Toast.LENGTH_LONG).show();
+            if(msg.arg1 == 2)   //password incorrect
+                Toast.makeText(getApplicationContext(),"Toilet Exists", Toast.LENGTH_LONG).show();
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,21 +132,36 @@ public class AddToiletActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 String json = new GsonBuilder().create().toJson(t, Toilet.class);
                 try {
-                    RequestBody formBody = new FormEncodingBuilder().add("toilet", json).build();
+                    RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
 
                     Request request = new Request.Builder()
                             .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/bathroom")
-                            .post(formBody)
+                            .post(body)
                             .build();
 
-                    Response response = client.newCall(request).execute();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    client.newCall(request).enqueue(new Callback() {
+                        public void onFailure(Request request, IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(Response response) throws IOException {
+                            try (ResponseBody responseBody = response.body()) {
+                                if(!response.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(), "Adding this toilet wasn't successful", Toast.LENGTH_LONG).show();
+                                }else {
+                                    setResult(Activity.RESULT_OK);
+                                    finish();
+                                }
+                            }
+                        }
+                    });
                 }
-                setResult(Activity.RESULT_OK);
-                finish();
+                catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
+
+
             }
         });
 
