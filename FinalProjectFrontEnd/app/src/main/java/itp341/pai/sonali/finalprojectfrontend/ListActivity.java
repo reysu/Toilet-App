@@ -164,19 +164,19 @@ public class ListActivity extends AppCompatActivity  {
        // addButton = (Button) findViewById(R.id.button_add);
         toiletList = (ListView)findViewById(R.id.toiletList);
         Toilet toilet = new Toilet("Cardinal Gardens","3131 Mcclintock Avenue",true,false);
-        Toilet toilet2 = new Toilet("Leavey Library","3131 123123123 Avenue",false,true);
-        Toilet toilet3 = new Toilet("Cafe 84","3131 Mcclintock Avenue",true,false);
-        Toilet toilet4 = new Toilet("Starbucks","3131 Mcclintock Avenue",true,true);
-        Toilet toilet5 = new Toilet("USC Village","3131 Mcclintock Avenue",false,false);
+       // Toilet toilet2 = new Toilet("Leavey Library","3131 123123123 Avenue",false,true);
+        //Toilet toilet3 = new Toilet("Cafe 84","3131 Mcclintock Avenue",true,false);
+        //Toilet toilet4 = new Toilet("Starbucks","3131 Mcclintock Avenue",true,true);
+        //Toilet toilet5 = new Toilet("USC Village","3131 Mcclintock Avenue",false,false);
         toilet.setLatitude(34.018740);
         toilet.setLongitude(-118.291156);
 
 
         toilets.add(toilet);
-        toilets.add(toilet2);
-        toilets.add(toilet3);
-        toilets.add(toilet4);
-        toilets.add(toilet5);
+       // toilets.add(toilet2);
+        //toilets.add(toilet3);
+        //toilets.add(toilet4);
+        //toilets.add(toilet5);
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/bathroom")
@@ -199,7 +199,10 @@ public class ListActivity extends AppCompatActivity  {
                         Type targetClassType = new TypeToken<ArrayList<Toilet>>(){}.getType();
                         List<Toilet> toiletstemp = gson.fromJson(toiletJson,targetClassType);
                         System.out.println(toiletstemp.get(0).getNameOfLocation());
-                        toilets.add(toiletstemp.get(0));
+                        for(int i=0;i<toiletstemp.size();i++){
+                            toilets.add(toiletstemp.get(i));
+                        }
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
