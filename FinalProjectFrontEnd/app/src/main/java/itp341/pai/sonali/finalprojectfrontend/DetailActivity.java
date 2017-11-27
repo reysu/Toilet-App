@@ -1,5 +1,6 @@
 package itp341.pai.sonali.finalprojectfrontend;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -10,11 +11,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -50,12 +54,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -70,7 +78,12 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 //import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.MultipartBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -81,6 +94,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import static android.media.MediaRecorder.VideoSource.CAMERA;
+
+
 /**
  * Created by Sonali Pai on 11/10/2017.
  */
@@ -88,8 +104,9 @@ import android.widget.Toast;
 public class DetailActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback, OnMyLocationButtonClickListener,
         ActivityCompat.OnRequestPermissionsResultCallback, PermissionUtils.PermissionResultCallback {
 
-    //private int bathroomId = -1;
+    private long bathroomId = -1;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static final String url = "http://ec2-54-86-4-0.compute-1.amazonaws.com:8080";
     private boolean mPermissionDenied = false;
     private GoogleMap mMap;
     private TextView bathroomNameView;
@@ -113,6 +130,126 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
     private boolean isGuest;
     private Toolbar mTopToolbar;
+
+    public void choosePhotoFromGallary() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(galleryIntent, 2003);
+    }
+
+    private void takePhotoFromCamera() {
+        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, CAMERA);
+    }
+    private void showPictureDialog() {
+        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
+        pictureDialog.setTitle("Select Action");
+        String[] pictureDialogItems = {
+                "Select photo from gallery",
+                "Capture photo from camera"};
+        pictureDialog.setItems(pictureDialogItems,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                choosePhotoFromGallary();
+                                break;
+                            case 1:
+                                takePhotoFromCamera();
+                                break;
+                        }
+                    }
+                });
+        pictureDialog.show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == this.RESULT_CANCELED) {
+            return;
+        }
+        if (requestCode == 2003) {
+            if (data != null) {
+                Uri contentURI = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
+                    //String path = saveImage(bitmap);
+                    uploadImage(bitmap);
+                    Toast.makeText(DetailActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                  //  imageview.setImageBitmap(bitmap);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(DetailActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        } else if (requestCode == CAMERA) {
+            Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+           // imageview.setImageBitmap(thumbnail);
+            uploadImage(thumbnail);
+            Toast.makeText(DetailActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void uploadImage(Bitmap myBitmap)
+    {
+        try {
+
+            String endpointUrl = url + "/" + bathroomId + "/photo";
+            final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+            File filesDir = getApplicationContext().getFilesDir();
+            File imageFile = new File(filesDir, bathroomId +".png" );
+            OutputStream os = new FileOutputStream(imageFile);
+            myBitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+            os.flush();
+            os.close();
+
+            RequestBody req = new MultipartBuilder().type(MultipartBuilder.FORM).addFormDataPart("file", bathroomId+"_pic", RequestBody.create(MEDIA_TYPE_PNG, imageFile)).build();
+            Request request = new Request.Builder()
+                    .url("url")
+                    .post(req)
+                    .build();
+            OkHttpClient client = new OkHttpClient();
+            Response response = client.newCall(request).execute();
+        }catch (Exception e )
+        {
+            Log.e(TAG, e.getLocalizedMessage());
+        }
+
+    }
+    public String saveImage(Bitmap myBitmap) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+        File wallpaperDirectory = new File(
+                Environment.getExternalStorageDirectory() + "image/");
+        // have the object build the directory structure, if needed.
+        if (!wallpaperDirectory.exists()) {
+            wallpaperDirectory.mkdirs();
+        }
+
+        try {
+            File f = new File(wallpaperDirectory, Calendar.getInstance()
+                    .getTimeInMillis() + ".jpg");
+            f.createNewFile();
+            FileOutputStream fo = new FileOutputStream(f);
+            fo.write(bytes.toByteArray());
+            MediaScannerConnection.scanFile(this,
+                    new String[]{f.getPath()},
+                    new String[]{"image/jpeg"}, null);
+            fo.close();
+            Log.d("TAG", "File Saved::--->" + f.getAbsolutePath());
+
+            return f.getAbsolutePath();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return "";
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,9 +267,11 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         goToGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), Gallery.class);
+      //          Intent i = new Intent(getApplicationContext(), Gallery.class);
 //                i.putExtra("toilet", t);
-                startActivity(i);
+        //        startActivity(i);
+                showPictureDialog();
+
             }
         });
 
@@ -145,12 +284,15 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         Intent i = getIntent();
         t = (Toilet) i.getSerializableExtra("toilet");
         isGuest = i.getBooleanExtra("guest",false);
+        bathroomId = t.getBathroomId();
 
-
-//        bathroomId = getIntent().getIntExtra("bathroomId", -1);
+       // bathroomId = getIntent().getIntExtra("bathroomId", -1);
 //
 //        try {
-//            URL url_getBathroom = new URL("http://localhost:8080/BathroomServlet?bathroomId=" + bathroomId);
+//            URL url_getBa
+//
+//
+// throom = new URL("http://localhost:8080/BathroomServlet?bathroomId=" + bathroomId);
 //            GET_HTTP getBathroomHTTP = new GET_HTTP(url_getBathroom);
 //            String bathroomJson = getBathroomHTTP.getResponse();
 //            Gson gson = new Gson();
