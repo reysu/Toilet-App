@@ -22,7 +22,7 @@
     <item
         android:id="@+id/key_sort"
         android:orderInCategory="300"
-        android:title = "Requires Key"
+        android:title = "No Key"
         app:showAsAction = "never">
     </item>
     <item
