@@ -53,6 +53,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -170,14 +172,18 @@ public class ListActivity extends AppCompatActivity  {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.location_sort:
+            case R.id.disabled_sort:
                 //make a call to the server to get a list of toilets sorted by location
-                //toilets = WHATEVER SERVER GIVES US;
+                Collections.sort(toilets, new DisabledComparator());
+                refresh();
+                return true;
+            case R.id.key_sort:
+                //make a call to the server to get a list of toilets sorted by location
+                Collections.sort(toilets, new KeyComparator());
                 refresh();
                 return true;
             case R.id.points_sort:
-                //make a call to the server to get a list of toilets sorted by points
-                //toilets = WHATEVER SERVER GIVES US;
+                Collections.sort(toilets, new PointComparator());
                 refresh();
                 return true;
             case R.id.pin:
@@ -444,7 +450,14 @@ public class ListActivity extends AppCompatActivity  {
 
     //refresh method
     public void refresh(){
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter = new ToiletListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1,toilets);
+                toiletList.setAdapter(adapter);
+            }
+        });
     }
 
     @Override
@@ -461,10 +474,44 @@ public class ListActivity extends AppCompatActivity  {
     }
 }
 
+class PointComparator implements Comparator<Toilet>
+{
+    // Used for sorting in ascending order of
+    // roll number
+    public int compare(Toilet a, Toilet b)
+    {
+        return b.getPoints() - a.getPoints();
+    }
+}
+class KeyComparator implements Comparator<Toilet>
+{
+    // Used for sorting in ascending order of
+    // roll number
+    public int compare(Toilet a, Toilet b){
 
+        int compare = Boolean.valueOf(a.isRequiresKey()).compareTo(Boolean.valueOf(b.isRequiresKey()));
+        if(compare == 0){
+            return b.getPoints() - a.getPoints();
+        } else {
+            return compare;
+        }
+    }
+}
 
+class DisabledComparator implements Comparator<Toilet>
+{
+    // Used for sorting in ascending order of
+    // roll number
+    public int compare(Toilet a, Toilet b){
 
-
+        int compare = Boolean.valueOf(a.isHasDisabilityAccomodations()).compareTo(Boolean.valueOf(b.isHasDisabilityAccomodations()));
+        if(compare == 0){
+            return a.getPoints() - b.getPoints();
+        } else {
+            return compare;
+        }
+    }
+}
 
 
 
