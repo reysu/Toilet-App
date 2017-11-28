@@ -174,7 +174,7 @@ public class ListActivity extends AppCompatActivity  {
         switch(item.getItemId()) {
             case R.id.disabled_sort:
                 //make a call to the server to get a list of toilets sorted by location
-                Collections.sort(toilets, new DisabledComparator());
+                Collections.sort(toilets, new DisabledComparator().reversed());
                 refresh();
                 return true;
             case R.id.key_sort:
