@@ -269,54 +269,60 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
         //change color of status bar
         window.setStatusBarColor(getResources().getColor(android.R.color.black));
+        comments = new ArrayList<Comment>();
+        commentStrings = new ArrayList<String>();
 
 
         Intent i = getIntent();
         t = (Toilet) i.getSerializableExtra("toilet");
-        System.out.println("TOILET ID FROM DETAIL ACTIVITY: " + t.getBathroomId());
         isGuest = i.getBooleanExtra("guest",false);
         bathroomId = t.getBathroomId();
 
-        //retrievecommentsfromthedatabase
-        OkHttpClient client = new OkHttpClient();
-        Request request=new Request.Builder()
-                .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/"+bathroomId+"/bathroomId/comment")
-                .get()
-                .build();
-        client.newCall(request).enqueue(new Callback(){
-            @Override
-                    public void onFailure(Request request,IOException e){
-                e.printStackTrace();
-            }
+        runOnUiThread(new Runnable() {
+                          @Override
+                          public void run() {
+                              //retrievecommentsfromthedatabase
+                              OkHttpClient client = new OkHttpClient();
+                              Request request = new Request.Builder()
+                                      .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/bathroom/" + bathroomId + "/comment")
+                                      .get()
+                                      .build();
+                              client.newCall(request).enqueue(new Callback() {
+                                  @Override
+                                  public void onFailure(Request request, IOException e) {
+                                      e.printStackTrace();
+                                  }
 
-            @Override
-                    public void onResponse(Response response)throws IOException{
-                try(ResponseBody responseBody =response.body()){
-                    if(!response.isSuccessful()){
+                                  @Override
+                                  public void onResponse(Response response) throws IOException {
+                                      try (ResponseBody responseBody = response.body()) {
+                                          if (!response.isSuccessful()) {
 
-                    }else{
-                        String commentJson=response.body().string();
-                        Gson gson=new Gson();
-                        Type targetClassType=new TypeToken<ArrayList<Comment>>(){
-                        }.getType();
-                        comments=gson.fromJson(commentJson,targetClassType);
-                        for(int i=0;i<comments.size();i++){
-                            commentStrings.add(comments.get(i).getCommentText());
-                        }
+                                          } else {
+                                              String commentJson = response.body().string();
+                                              Gson gson = new Gson();
+                                              Type targetClassType = new TypeToken<ArrayList<Comment>>() {
+                                              }.getType();
+                                              comments = gson.fromJson(commentJson, targetClassType);
+                                              for (int i = 0; i < comments.size(); i++) {
+                                                  commentStrings.add(comments.get(i).getCommentText());
+                                              }
 
-                        runOnUiThread(new Runnable(){
-                            @Override
-                                    public void run(){
-                                adap=new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,
-                                        commentStrings);
-                                commentsView.setAdapter(adap);
-                            }
-                        });
+                                              runOnUiThread(new Runnable() {
+                                                  @Override
+                                                  public void run() {
+                                                      adap = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
+                                                              commentStrings);
+                                                      commentsView.setAdapter(adap);
+                                                  }
+                                              });
 
-                    }
-                }
-            }
-        });
+                                          }
+                                      }
+                                  }
+                              });
+                          }
+                      });
         //create an instance of the Fused Location Provider Client
        // mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -393,7 +399,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), CommentActivity.class);
                 i.putExtra("toilet", t);
-                startActivityForResult(i, 0);
+                startActivityForResult(i, 2);
             }
         });
         fabImage.setOnClickListener(new View.OnClickListener() {
@@ -629,11 +635,11 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
             Toast.makeText(DetailActivity.this, "Request Sent!", Toast.LENGTH_SHORT).show();
         }
 
-        else if(requestCode == RESULT_OK){
+        else if(requestCode == 2){
             //retrievecommentsfromthedatabase
             OkHttpClient client = new OkHttpClient();
             Request request=new Request.Builder()
-                    .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/"+bathroomId+"/bathroomId/comment")
+                    .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/bathroom/"+bathroomId+"/comment")
                     .get()
                     .build();
             client.newCall(request).enqueue(new Callback(){
@@ -653,6 +659,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
                             Type targetClassType=new TypeToken<ArrayList<Comment>>(){
                             }.getType();
                             comments=gson.fromJson(commentJson,targetClassType);
+                            commentStrings.clear();
                             for(int i=0;i<comments.size();i++){
                                 commentStrings.add(comments.get(i).getCommentText());
                             }
