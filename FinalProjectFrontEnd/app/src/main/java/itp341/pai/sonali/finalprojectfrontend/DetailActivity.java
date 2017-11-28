@@ -188,8 +188,8 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
     public void uploadImage(Bitmap myBitmap)
     {
         try {
-
             String endpointUrl = url + "/bathroom/" + bathroomId + "/photo?userId=1";
+            System.out.println("EndpointUrl:           " + endpointUrl);
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
             File filesDir = getApplicationContext().getFilesDir();
             File imageFile = new File(filesDir, bathroomId +".png" );
@@ -204,8 +204,24 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
                     .post(req)
                     .build();
             OkHttpClient client = new OkHttpClient();
-            Response response = client.newCall(request).execute();
-        }catch (Exception e )
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    e.printStackTrace();
+                }
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    try (ResponseBody responseBody = response.body()) {
+                        if (!response.isSuccessful()) {
+                            //error
+                        } else {
+
+
+                        }
+                    }
+                }
+            });
+   }catch (Exception e )
         {
             Log.e(TAG, e.getLocalizedMessage());
         }
