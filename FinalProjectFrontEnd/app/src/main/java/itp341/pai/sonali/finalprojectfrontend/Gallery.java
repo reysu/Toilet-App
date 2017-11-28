@@ -2,10 +2,12 @@ package itp341.pai.sonali.finalprojectfrontend;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,9 +22,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +36,7 @@ import java.util.List;
 
 import itp341.pai.sonali.finalprojectfrontend.model.Photo;
 import itp341.pai.sonali.finalprojectfrontend.model.Toilet;
+import itp341.pai.sonali.finalprojectfrontend.model.User;
 
 /**
  * Created by reysu on 11/17/17.
@@ -57,19 +62,28 @@ public class Gallery extends AppCompatActivity {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
-        try {
-            Response response = client.newCall(request).execute();
-            String photoJson = response.body().string();
-            Gson gson = new Gson();
-            Type targetClassType = new TypeToken<ArrayList<Photo>>(){}.getType();
-            List<Photo> photostemp = gson.fromJson(photoJson,targetClassType);
-            for(int j=0;j<photostemp.size();j++){
-                photos.add(photostemp.get(j));
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
             }
-        }catch (IOException ioe)
-        {
-            ioe.getStackTrace();
-        }
+            @Override
+            public void onResponse(Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (!response.isSuccessful()) {
+                        String photoJson = response.body().string();
+                        Gson gson = new Gson();
+                        Type targetClassType = new TypeToken<ArrayList<Photo>>(){}.getType();
+                        List<Photo> photostemp = gson.fromJson(photoJson,targetClassType);
+                        for(int j=0;j<photostemp.size();j++){
+                            photos.add(photostemp.get(j));
+                        }
+                    } else {
+
+                    }
+                }
+            }
+        });
 
     }
 
