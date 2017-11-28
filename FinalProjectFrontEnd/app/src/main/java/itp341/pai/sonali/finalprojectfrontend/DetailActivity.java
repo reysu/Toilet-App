@@ -2,6 +2,7 @@ package itp341.pai.sonali.finalprojectfrontend;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import com.squareup.okhttp.Callback;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -61,6 +62,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -81,6 +83,7 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 //import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.MultipartBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -133,6 +136,8 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "DetailActivity";
     private ImageView goToGallery;
+    private ArrayList<Comment> comments;
+    private ArrayList<String> commentStrings;
 
     private boolean isGuest;
     private Toolbar mTopToolbar;
@@ -179,37 +184,6 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 //        pictureDialog.show();
 //    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == this.RESULT_CANCELED) {
-            return;
-        }
-        if (requestCode == 2003) {
-            if (data != null) {
-                Uri contentURI = data.getData();
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    //String path = saveImage(bitmap);
-                    uploadImage(bitmap);
-                    Toast.makeText(DetailActivity.this, "Request Sent!", Toast.LENGTH_SHORT).show();
-                    //  imageview.setImageBitmap(bitmap);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(DetailActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-        } else if (requestCode == CAMERA) {
-            Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            // imageview.setImageBitmap(thumbnail);
-            uploadImage(thumbnail);
-
-        }
-
-    }
 
     public void uploadImage(Bitmap myBitmap)
     {
@@ -294,6 +268,8 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
         //change color of status bar
         window.setStatusBarColor(getResources().getColor(android.R.color.black));
+        comments = new ArrayList<Comment>();
+        commentStrings = new ArrayList<String>();
 
 
         Intent i = getIntent();
@@ -301,6 +277,51 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         isGuest = i.getBooleanExtra("guest",false);
         bathroomId = t.getBathroomId();
 
+        runOnUiThread(new Runnable() {
+                          @Override
+                          public void run() {
+                              //retrievecommentsfromthedatabase
+                              OkHttpClient client = new OkHttpClient();
+                              Request request = new Request.Builder()
+                                      .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/bathroom/" + bathroomId + "/comment")
+                                      .get()
+                                      .build();
+                              client.newCall(request).enqueue(new Callback() {
+                                  @Override
+                                  public void onFailure(Request request, IOException e) {
+                                      e.printStackTrace();
+                                  }
+
+                                  @Override
+                                  public void onResponse(Response response) throws IOException {
+                                      try (ResponseBody responseBody = response.body()) {
+                                          if (!response.isSuccessful()) {
+
+                                          } else {
+                                              String commentJson = response.body().string();
+                                              Gson gson = new Gson();
+                                              Type targetClassType = new TypeToken<ArrayList<Comment>>() {
+                                              }.getType();
+                                              comments = gson.fromJson(commentJson, targetClassType);
+                                              for (int i = 0; i < comments.size(); i++) {
+                                                  commentStrings.add(comments.get(i).getCommentText());
+                                              }
+
+                                              runOnUiThread(new Runnable() {
+                                                  @Override
+                                                  public void run() {
+                                                      adap = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
+                                                              commentStrings);
+                                                      commentsView.setAdapter(adap);
+                                                  }
+                                              });
+
+                                          }
+                                      }
+                                  }
+                              });
+                          }
+                      });
         // bathroomId = getIntent().getIntExtra("bathroomId", -1);
 //
 //        try {
@@ -394,7 +415,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), CommentActivity.class);
                 i.putExtra("toilet", t);
-                startActivityForResult(i, 0);
+                startActivityForResult(i, 2);
             }
         });
         fabImage.setOnClickListener(new View.OnClickListener() {
@@ -599,4 +620,79 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
 //        return super.onOptionsItemSelected();
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == this.RESULT_CANCELED) {
+            return;
+        }
+        if (requestCode == 2003) {
+            if (data != null) {
+                Uri contentURI = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
+                    //String path = saveImage(bitmap);
+                    uploadImage(bitmap);
+                    Toast.makeText(DetailActivity.this, "Request Sent!", Toast.LENGTH_SHORT).show();
+                    //  imageview.setImageBitmap(bitmap);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(DetailActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        } else if (requestCode == CAMERA) {
+            Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+            // imageview.setImageBitmap(thumbnail);
+            uploadImage(thumbnail);
+            Toast.makeText(DetailActivity.this, "Request Sent!", Toast.LENGTH_SHORT).show();
+        }
+
+        else if(requestCode == 2){
+            //retrievecommentsfromthedatabase
+            OkHttpClient client = new OkHttpClient();
+            Request request=new Request.Builder()
+                    .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/bathroom/"+bathroomId+"/comment")
+                    .get()
+                    .build();
+            client.newCall(request).enqueue(new Callback(){
+                @Override
+                public void onFailure(Request request,IOException e){
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Response response)throws IOException{
+                    try(ResponseBody responseBody =response.body()){
+                        if(!response.isSuccessful()){
+
+                        }else{
+                            String commentJson=response.body().string();
+                            Gson gson=new Gson();
+                            Type targetClassType=new TypeToken<ArrayList<Comment>>(){
+                            }.getType();
+                            comments=gson.fromJson(commentJson,targetClassType);
+                            commentStrings.clear();
+                            for(int i=0;i<comments.size();i++){
+                                commentStrings.add(comments.get(i).getCommentText());
+                            }
+
+                            runOnUiThread(new Runnable(){
+                                @Override
+                                public void run(){
+                                    adap=new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,
+                                            commentStrings);
+                                    commentsView.setAdapter(adap);
+                                }
+                            });
+
+                        }
+                    }
+                }
+            });
+        }
+    }
+
 }
