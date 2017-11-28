@@ -13,9 +13,9 @@ public class Comment {
     private String title;
     private String commentText;
     private Integer userId;
-    private Integer bathroomId;
+    private long bathroomId;
 
-    public Comment(String title, String commentText, Integer userId, Integer bathroomId) {
+    public Comment(String title, String commentText, Integer userId, long bathroomId) {
         this.title = title;
         this.commentText = commentText;
         this.userId = userId;
@@ -54,11 +54,11 @@ public class Comment {
         this.userId = userId;
     }
 
-    public Integer getBathroomId() {
+    public long getBathroomId() {
         return bathroomId;
     }
 
-    public void setBathroomId(Integer bathroomId) {
+    public void setBathroomId(long bathroomId) {
         this.bathroomId = bathroomId;
     }
 }
