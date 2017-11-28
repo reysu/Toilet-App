@@ -63,8 +63,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#000000"));
+        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#ffffff"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
+        getSupportActionBar().setElevation(0);
 
         Window window = this.getWindow();
         window.setTitle("Pooper");
