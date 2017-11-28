@@ -1,8 +1,8 @@
 package itp341.pai.sonali.finalprojectfrontend;
 
 import android.content.DialogInterface;
-import com.squareup.okhttp.Callback;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,9 +16,9 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -61,7 +61,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -75,13 +74,13 @@ import itp341.pai.sonali.finalprojectfrontend.model.Comment;
 import itp341.pai.sonali.finalprojectfrontend.model.GET_HTTP;
 import itp341.pai.sonali.finalprojectfrontend.model.PermissionUtils;
 import itp341.pai.sonali.finalprojectfrontend.model.Toilet;
+import itp341.pai.sonali.finalprojectfrontend.model.User;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 //import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.MultipartBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -101,6 +100,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import static android.media.MediaRecorder.VideoSource.CAMERA;
+import static itp341.pai.sonali.finalprojectfrontend.MainActivity.USERID;
 
 
 /**
@@ -110,6 +110,7 @@ import static android.media.MediaRecorder.VideoSource.CAMERA;
 public class DetailActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback, OnMyLocationButtonClickListener,
         ActivityCompat.OnRequestPermissionsResultCallback, PermissionUtils.PermissionResultCallback {
 
+    private long bathroomId = -1;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final String url = "http://ec2-54-86-4-0.compute-1.amazonaws.com:8080";
     private boolean mPermissionDenied = false;
@@ -132,22 +133,16 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "DetailActivity";
     private ImageView goToGallery;
-    ArrayList<Comment> comments;
-    long bathroomId;
-    ArrayList<String> commentStrings;
-
 
     private boolean isGuest;
     private Toolbar mTopToolbar;
 
-    public void choosePhotoFromGallary() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        startActivityForResult(galleryIntent, 2003);
-    }
-
-
+//    public void choosePhotoFromGallary() {
+//        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//
+//        startActivityForResult(galleryIntent, 2003);
+//    }
 
     private void takePhotoFromCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -161,36 +156,66 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, CAMERA);
     }
-    private void showPictureDialog() {
-        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
-        pictureDialog.setTitle("Select Action");
-        String[] pictureDialogItems = {
-                "Select photo from gallery",
-                "Capture photo from camera"};
-        pictureDialog.setItems(pictureDialogItems,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                choosePhotoFromGallary();
-                                break;
-                            case 1:
-                                takePhotoFromCamera();
-                                break;
-                        }
-                    }
-                });
-        pictureDialog.show();
+//    private void showPictureDialog() {
+//        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
+//        pictureDialog.setTitle("Select Action");
+//        String[] pictureDialogItems = {
+//                "Select photo from gallery",
+//                "Capture photo from camera"};
+//        pictureDialog.setItems(pictureDialogItems,
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        switch (which) {
+//                            case 0:
+//                                choosePhotoFromGallary();
+//                                break;
+//                            case 1:
+//                                takePhotoFromCamera();
+//                                break;
+//                        }
+//                    }
+//                });
+//        pictureDialog.show();
+//    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == this.RESULT_CANCELED) {
+            return;
+        }
+        if (requestCode == 2003) {
+            if (data != null) {
+                Uri contentURI = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
+                    //String path = saveImage(bitmap);
+                    uploadImage(bitmap);
+                    Toast.makeText(DetailActivity.this, "Request Sent!", Toast.LENGTH_SHORT).show();
+                    //  imageview.setImageBitmap(bitmap);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(DetailActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        } else if (requestCode == CAMERA) {
+            Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+            // imageview.setImageBitmap(thumbnail);
+            uploadImage(thumbnail);
+
+        }
+
     }
-
-
 
     public void uploadImage(Bitmap myBitmap)
     {
         try {
 
-            String endpointUrl = url + "/" + bathroomId + "/photo";
+            String endpointUrl = url + "/bathroom/" + bathroomId + "/photo?userId=1";
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
             File filesDir = getApplicationContext().getFilesDir();
             File imageFile = new File(filesDir, bathroomId +".png" );
@@ -201,7 +226,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
             RequestBody req = new MultipartBuilder().type(MultipartBuilder.FORM).addFormDataPart("file", bathroomId+"_pic", RequestBody.create(MEDIA_TYPE_PNG, imageFile)).build();
             Request request = new Request.Builder()
-                    .url("url")
+                    .url(endpointUrl)
                     .post(req)
                     .build();
             OkHttpClient client = new OkHttpClient();
@@ -212,34 +237,34 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         }
 
     }
-    public String saveImage(Bitmap myBitmap) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-        File wallpaperDirectory = new File(
-                Environment.getExternalStorageDirectory() + "image/");
-        // have the object build the directory structure, if needed.
-        if (!wallpaperDirectory.exists()) {
-            wallpaperDirectory.mkdirs();
-        }
-
-        try {
-            File f = new File(wallpaperDirectory, Calendar.getInstance()
-                    .getTimeInMillis() + ".jpg");
-            f.createNewFile();
-            FileOutputStream fo = new FileOutputStream(f);
-            fo.write(bytes.toByteArray());
-            MediaScannerConnection.scanFile(this,
-                    new String[]{f.getPath()},
-                    new String[]{"image/jpeg"}, null);
-            fo.close();
-            Log.d("TAG", "File Saved::--->" + f.getAbsolutePath());
-
-            return f.getAbsolutePath();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        return "";
-    }
+    //    public String saveImage(Bitmap myBitmap) {
+//        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+//        myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+//        File wallpaperDirectory = new File(
+//                Environment.getExternalStorageDirectory() + "image/");
+//        // have the object build the directory structure, if needed.
+//        if (!wallpaperDirectory.exists()) {
+//            wallpaperDirectory.mkdirs();
+//        }
+//
+//        try {
+//            File f = new File(wallpaperDirectory, Calendar.getInstance()
+//                    .getTimeInMillis() + ".jpg");
+//            f.createNewFile();
+//            FileOutputStream fo = new FileOutputStream(f);
+//            fo.write(bytes.toByteArray());
+//            MediaScannerConnection.scanFile(this,
+//                    new String[]{f.getPath()},
+//                    new String[]{"image/jpeg"}, null);
+//            fo.close();
+//            Log.d("TAG", "File Saved::--->" + f.getAbsolutePath());
+//
+//            return f.getAbsolutePath();
+//        } catch (IOException e1) {
+//            e1.printStackTrace();
+//        }
+//        return "";
+//    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -257,10 +282,10 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         goToGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-      //          Intent i = new Intent(getApplicationContext(), Gallery.class);
-//                i.putExtra("toilet", t);
-        //        startActivity(i);
-                showPictureDialog();
+                Intent i = new Intent(getApplicationContext(), Gallery.class);
+                i.putExtra("toilet", t);
+                startActivity(i);
+                //  showPictureDialog();
 
             }
         });
@@ -273,52 +298,28 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
         Intent i = getIntent();
         t = (Toilet) i.getSerializableExtra("toilet");
-        System.out.println("TOILET ID FROM DETAIL ACTIVITY: " + t.getBathroomId());
         isGuest = i.getBooleanExtra("guest",false);
         bathroomId = t.getBathroomId();
 
-        //retrievecommentsfromthedatabase
-        OkHttpClient client = new OkHttpClient();
-        Request request=new Request.Builder()
-                .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/"+bathroomId+"/bathroomId/comment")
-                .get()
-                .build();
-        client.newCall(request).enqueue(new Callback(){
-            @Override
-                    public void onFailure(Request request,IOException e){
-                e.printStackTrace();
-            }
+        // bathroomId = getIntent().getIntExtra("bathroomId", -1);
+//
+//        try {
+//            URL url_getBa
+//
+//
+// throom = new URL("http://localhost:8080/BathroomServlet?bathroomId=" + bathroomId);
+//            GET_HTTP getBathroomHTTP = new GET_HTTP(url_getBathroom);
+//            String bathroomJson = getBathroomHTTP.getResponse();
+//            Gson gson = new Gson();
+//            bathroom = gson.fromJson(bathroomJson, Toilet.class);
+//        } catch (MalformedURLException mue) {
+//            mue.getStackTrace();
+//        } catch (IOException ioe) {
+//            ioe.getStackTrace();
+//        }
 
-            @Override
-                    public void onResponse(Response response)throws IOException{
-                try(ResponseBody responseBody =response.body()){
-                    if(!response.isSuccessful()){
-
-                    }else{
-                        String commentJson=response.body().string();
-                        Gson gson=new Gson();
-                        Type targetClassType=new TypeToken<ArrayList<Comment>>(){
-                        }.getType();
-                        comments=gson.fromJson(commentJson,targetClassType);
-                        for(int i=0;i<comments.size();i++){
-                            commentStrings.add(comments.get(i).getCommentText());
-                        }
-
-                        runOnUiThread(new Runnable(){
-                            @Override
-                                    public void run(){
-                                adap=new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,
-                                        commentStrings);
-                                commentsView.setAdapter(adap);
-                            }
-                        });
-
-                    }
-                }
-            }
-        });
         //create an instance of the Fused Location Provider Client
-       // mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        // mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -399,10 +400,10 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
         fabImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                Uri cameraImageUri = getOutputMediaFileUri(1);
-                startActivityForResult(cameraIntent, 0);
-
+//                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                Uri cameraImageUri = getOutputMediaFileUri(1);
+//                startActivityForResult(cameraIntent, 0);
+                takePhotoFromCamera();
             }
         });
 
@@ -451,7 +452,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
     @Override
     public boolean onMyLocationButtonClick() {
-       // Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
 
         ArrayList<String> permissions=new ArrayList<>();
         PermissionUtils permissionUtils;
@@ -476,15 +477,15 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
                     double lng = currentLocation.getLongitude();
                     LatLng coordinate = new LatLng(lat, lng); //Store these lat lng values somewhere. These should be constant.
                     CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
-                        coordinate, 15);
+                            coordinate, 15);
                     mMap.animateCamera(location);
                 }
             }
 
-            }catch (SecurityException se)
-           {
-               Toast.makeText(this, "Pooper cannot get your current location.", Toast.LENGTH_SHORT).show();
-           }
+        }catch (SecurityException se)
+        {
+            Toast.makeText(this, "Pooper cannot get your current location.", Toast.LENGTH_SHORT).show();
+        }
 
         // Return false so that we don't consume the event and the default behavior still occurs
         return false;
@@ -598,80 +599,4 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
 //        return super.onOptionsItemSelected();
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == this.RESULT_CANCELED) {
-            return;
-        }
-        if (requestCode == 2003) {
-            if (data != null) {
-                Uri contentURI = data.getData();
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    //String path = saveImage(bitmap);
-                    uploadImage(bitmap);
-                    Toast.makeText(DetailActivity.this, "Request Sent!", Toast.LENGTH_SHORT).show();
-                    //  imageview.setImageBitmap(bitmap);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(DetailActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-        } else if (requestCode == CAMERA) {
-            Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            // imageview.setImageBitmap(thumbnail);
-            uploadImage(thumbnail);
-            Toast.makeText(DetailActivity.this, "Request Sent!", Toast.LENGTH_SHORT).show();
-        }
-
-        else if(requestCode == RESULT_OK){
-            //retrievecommentsfromthedatabase
-            OkHttpClient client = new OkHttpClient();
-            Request request=new Request.Builder()
-                    .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/"+bathroomId+"/bathroomId/comment")
-                    .get()
-                    .build();
-            client.newCall(request).enqueue(new Callback(){
-                @Override
-                public void onFailure(Request request,IOException e){
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(Response response)throws IOException{
-                    try(ResponseBody responseBody =response.body()){
-                        if(!response.isSuccessful()){
-
-                        }else{
-                            String commentJson=response.body().string();
-                            Gson gson=new Gson();
-                            Type targetClassType=new TypeToken<ArrayList<Comment>>(){
-                            }.getType();
-                            comments=gson.fromJson(commentJson,targetClassType);
-                            for(int i=0;i<comments.size();i++){
-                                commentStrings.add(comments.get(i).getCommentText());
-                            }
-
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run(){
-                                    adap=new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,
-                                            commentStrings);
-                                    commentsView.setAdapter(adap);
-                                }
-                            });
-
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-
 }
