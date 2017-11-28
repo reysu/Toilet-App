@@ -198,7 +198,7 @@ public class ListActivity extends AppCompatActivity  {
                         Gson gson = new Gson();
                         Type targetClassType = new TypeToken<ArrayList<Toilet>>(){}.getType();
                         List<Toilet> toiletstemp = gson.fromJson(toiletJson,targetClassType);
-                        System.out.println(toiletstemp.get(0).getNameOfLocation());
+//                        System.out.println(toiletstemp.get(0).getNameOfLocation());
                         for(int i=0;i<toiletstemp.size();i++){
                             toilets.add(toiletstemp.get(i));
                         }
