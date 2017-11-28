@@ -43,10 +43,10 @@
 
     <ImageView
         android:id="@+id/toiletImage"
+        android:src = "@drawable/toilet"
         android:layout_width="100dp"
         android:layout_height="120dp"
         android:layout_alignParentEnd="true"
-        android:background="@android:color/holo_orange_light"
         />
 
     <TextView
