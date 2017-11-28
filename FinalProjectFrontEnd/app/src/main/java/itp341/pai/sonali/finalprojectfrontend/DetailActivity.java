@@ -139,6 +139,14 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
     }
 
     private void takePhotoFromCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_DENIED)
+        {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, 1);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_DENIED){            Toast.makeText(DetailActivity.this, "Camera Permission Not Granted!", Toast.LENGTH_SHORT).show();
+            return;}
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, CAMERA);
     }
@@ -179,7 +187,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
                     //String path = saveImage(bitmap);
                     uploadImage(bitmap);
-                    Toast.makeText(DetailActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailActivity.this, "Request Sent!", Toast.LENGTH_SHORT).show();
                   //  imageview.setImageBitmap(bitmap);
 
                 } catch (IOException e) {
@@ -192,7 +200,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
            // imageview.setImageBitmap(thumbnail);
             uploadImage(thumbnail);
-            Toast.makeText(DetailActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DetailActivity.this, "Request Sent!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -353,6 +361,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
             fabButton.setVisibility(View.GONE);
             fabImage.setVisibility(View.GONE);
             fabComment.setVisibility(View.GONE);
+            goToGallery.setVisibility(View.GONE);
         }
         //floating action button listener
         fabButton.setOnClickListener(new View.OnClickListener() {
