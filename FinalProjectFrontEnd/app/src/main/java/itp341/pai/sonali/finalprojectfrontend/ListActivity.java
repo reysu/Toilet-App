@@ -96,11 +96,54 @@ public class ListActivity extends AppCompatActivity  {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/bathroom/search?searchString="+s)
+                        .get()
+                        .build();
+                System.out.println("query: " + s);
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        e.printStackTrace();
+                    }
+                    @Override
+                    public void onResponse(Response  response) throws IOException {
+                        try (ResponseBody responseBody = response.body()) {
+                            if(!response.isSuccessful()) {
+                                System.out.println("not successful");
+                            }else {
+                                String toiletJson = response.body().string();
+                                Gson gson = new Gson();
+                                Type targetClassType = new TypeToken<ArrayList<Toilet>>(){}.getType();
+                                final List<Toilet> toiletstemp = gson.fromJson(toiletJson,targetClassType);
+                                //toilets = gson.fromJson(toiletJson,targetClassType);
+                            //    refresh();
+                     //   System.out.println(toiletstemp.get(0).getNameOfLocation());
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        adapter = new ToiletListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1,toiletstemp);
+                                        toiletList.setAdapter(adapter);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter = new ToiletListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1,toilets);
+                        toiletList.setAdapter(adapter);
+                    }
+                });
                 return false;
             }
         });
@@ -108,12 +151,13 @@ public class ListActivity extends AppCompatActivity  {
         MenuItem.OnActionExpandListener expandListener = new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem menuItem) {
+
                 return false;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                refresh();
+
                 return false;
             }
         };
