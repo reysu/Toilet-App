@@ -11,7 +11,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id = "@+id/appName"
-            android:layout_marginTop = "70dp"
+            android:layout_marginTop = "50dp"
             android:layout_centerHorizontal="true"
             android:orientation="horizontal">
 
@@ -42,7 +42,7 @@
             android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="75dp"
             android:text="Username:"
             android:layout_below="@+id/appName"
             android:layout_alignStart="@+id/password" />
