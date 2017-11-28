@@ -332,13 +332,13 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 //        commentsView.setAdapter(commentsAdapter);
         addressView = (TextView) findViewById(R.id.address);
         addressView.setText(t.getAddress());
-        t.addComments("This bathroom is pretty clean");
-        t.addComments("One of my favorite locations.");
-        t.addComments("Good.");
-        t.addComments("This is a comment");
-        t.addComments("Satisfactory.");
-        adap = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, t.getComments());
-        commentsView.setAdapter(adap);
+//        t.addComments("This bathroom is pretty clean");
+//        t.addComments("One of my favorite locations.");
+//        t.addComments("Good.");
+//        t.addComments("This is a comment");
+//        t.addComments("Satisfactory.");
+//        adap = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, t.getComments());
+//        commentsView.setAdapter(adap);
         if (t.isHasDisabilityAccomodations()) {
             disabledIcon.setImageResource(R.drawable.ic_done_black_24px);
             disabledIcon.setColorFilter(Color.rgb(50, 205, 50));
