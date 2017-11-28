@@ -208,16 +208,16 @@ public class ListActivity extends AppCompatActivity  {
         //find views
        // addButton = (Button) findViewById(R.id.button_add);
         toiletList = (ListView)findViewById(R.id.toiletList);
-        Toilet toilet = new Toilet("Cardinal Gardens","3131 Mcclintock Avenue",true,false);
+        //Toilet toilet = new Toilet("Cardinal Gardens","3131 Mcclintock Avenue",true,false);
        // Toilet toilet2 = new Toilet("Leavey Library","3131 123123123 Avenue",false,true);
         //Toilet toilet3 = new Toilet("Cafe 84","3131 Mcclintock Avenue",true,false);
         //Toilet toilet4 = new Toilet("Starbucks","3131 Mcclintock Avenue",true,true);
         //Toilet toilet5 = new Toilet("USC Village","3131 Mcclintock Avenue",false,false);
-        toilet.setLatitude(34.018740);
-        toilet.setLongitude(-118.291156);
+      //  toilet.setLatitude(34.018740);
+      //  toilet.setLongitude(-118.291156);
 
 
-        toilets.add(toilet);
+     //   toilets.add(toilet);
        // toilets.add(toilet2);
         //toilets.add(toilet3);
         //toilets.add(toilet4);
@@ -453,7 +453,8 @@ public class ListActivity extends AppCompatActivity  {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                refresh();
+                adapter = new ToiletListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1,toilets);
+                toiletList.setAdapter(adapter);
             }
         });
         super.onActivityResult(requestCode, resultCode, data);

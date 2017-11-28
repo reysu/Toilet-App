@@ -196,6 +196,7 @@ public class AddToiletActivity extends AppCompatActivity implements GoogleApiCli
                                 if(!response.isSuccessful()) {
                                     Toast.makeText(getApplicationContext(), "Adding this toilet wasn't successful", Toast.LENGTH_LONG).show();
                                 }else {
+                                    startActivityForResult( new Intent(getApplicationContext(), ListActivity.class),1);
                                     setResult(Activity.RESULT_OK);
                                     finish();
                                 }
@@ -325,12 +326,17 @@ public class AddToiletActivity extends AppCompatActivity implements GoogleApiCli
             mMap.animateCamera(location);
             Address currentAddress = getAddress(lat, lng);
             String cAddress = "";
-            for (int n = 0; n <= currentAddress.getMaxAddressLineIndex(); n++) {
-                cAddress += currentAddress.getAddressLine(n) + ", ";
+
+           if(currentAddress != null) {
+                for (int n = 0; n <= currentAddress.getMaxAddressLineIndex(); n++) {
+                    cAddress += currentAddress.getAddressLine(n) + ", ";
+                }
+                currentLat = currentAddress.getLatitude();
+                currentLng = currentAddress.getLongitude();
             }
+            cAddress = cAddress.replaceAll(", $", ""); //removes trailing comma
             addressField.setText(cAddress);
-            currentLat = currentAddress.getLatitude();
-            currentLng = currentAddress.getLongitude();
+
         }
 
     }
@@ -374,11 +380,9 @@ public class AddToiletActivity extends AppCompatActivity implements GoogleApiCli
 
     public Address getAddress(double latitude, double longitude)
     {
-        Geocoder geocoder;
-        List<Address> addresses;
-        geocoder = new Geocoder(this, Locale.getDefault());
-
         try {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            List<Address> addresses = new ArrayList<Address>();
             addresses = geocoder.getFromLocation(latitude,longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
             return addresses.get(0);
         } catch (IOException e) {
