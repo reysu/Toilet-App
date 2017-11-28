@@ -20,9 +20,15 @@
     </item>
 
     <item
-        android:id="@+id/location_sort"
+        android:id="@+id/key_sort"
         android:orderInCategory="300"
-        android:title = "Sort by location"
+        android:title = "Requires Key"
+        app:showAsAction = "never">
+    </item>
+    <item
+        android:id="@+id/disabled_sort"
+        android:orderInCategory="300"
+        android:title = "Disabled Access"
         app:showAsAction = "never">
     </item>
     <item
