@@ -15,8 +15,7 @@ public class Comment {
     private Integer userId;
     private Integer bathroomId;
 
-    public Comment(Integer id, String title, String commentText, Integer userId, Integer bathroomId) {
-        this.id = id;
+    public Comment(String title, String commentText, Integer userId, Integer bathroomId) {
         this.title = title;
         this.commentText = commentText;
         this.userId = userId;
