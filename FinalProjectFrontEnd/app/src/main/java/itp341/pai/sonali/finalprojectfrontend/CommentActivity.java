@@ -52,49 +52,57 @@ public class CommentActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.comment_form);
         Intent i = getIntent();
-        final Toilet t = (Toilet)i.getSerializableExtra("toilet");
+        Toilet t = (Toilet)i.getSerializableExtra("toilet");
+        final long bathroomId = t.getBathroomId();
+        System.out.println("TOILET ID: " + t.getBathroomId());
         addCommentButton = (Button) findViewById(R.id.addCommentButton);
         comment = (EditText)findViewById(R.id.commentText);
         addCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String commentText = comment.getText().toString();
-                t.addComments(commentText);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String commentText = comment.getText().toString();
+                        OkHttpClient client = new OkHttpClient();
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        int userId = 1;
+                        System.out.println("USER ID: " + userId);
+                        Comment newComment = new Comment("", commentText, userId, bathroomId);
+                        String json = new GsonBuilder().create().toJson(newComment, Comment.class);
+                        try {
+                            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
+                            System.out.println("BATHROOM ID: " + bathroomId);
+                            Request request = new Request.Builder()
+                                    .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/bathroom/1/comment")
+                                    .post(body)
+                                    .build();
 
-                OkHttpClient client = new OkHttpClient();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                int userId = prefs.getInt("USERID", -1);; //the current user adding comment
-                Comment newComment = new Comment("", commentText,userId, (int) t.getBathroomId());
-                String json = new GsonBuilder().create().toJson(newComment, Comment.class);
-                try {
-                    RequestBody body =  RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-
-                    Request request = new Request.Builder()
-                            .url("http://ec2-54-86-4-0.compute-1.amazonaws.com:8080/bathroom/"+t.getBathroomId()+"/comment")
-                            .post(body)
-                            .build();
-
-                    client.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Request request, IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onResponse(Response response) throws IOException {
-                            try (ResponseBody responseBody = response.body()) {
-                                if (!response.isSuccessful()) {
-                                } else {
-                                    setResult(Activity.RESULT_OK);
-                                    finish();
+                            client.newCall(request).enqueue(new Callback() {
+                                @Override
+                                public void onFailure(Request request, IOException e) {
+                                    System.out.println("failed");
+                                    e.printStackTrace();
                                 }
-                            }
+
+                                @Override
+                                public void onResponse(Response response) throws IOException {
+                                    try (ResponseBody responseBody = response.body()) {
+                                        if (!response.isSuccessful()) {
+                                            System.out.println("wasn't successful");
+                                        } else {
+                                            System.out.println("successful");
+                                            setResult(Activity.RESULT_OK);
+                                            finish();
+                                        }
+                                    }
+                                }
+                            });
+                        } catch (Exception ie) {
+
                         }
-                    });
-                } catch (Exception ie){
-
-                }
-
+                    }
+                });
 
             }
         });

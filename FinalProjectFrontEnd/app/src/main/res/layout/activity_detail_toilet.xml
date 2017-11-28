@@ -8,163 +8,6 @@
 
     >
 
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.v7.widget.Toolbar
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:toolbar="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/my_awesome_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        >
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id = "@+id/goToGallery"
-            android:layout_gravity = "right"
-            android:layout_marginEnd = "30dp"
-            android:src = "@drawable/ic_image_white_24px"/>
-    </android.support.v7.widget.Toolbar>
-
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="200dp">
-
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:map="http://schemas.android.com/apk/res-auto"
-            android:name="com.google.android.gms.maps.MapFragment"
-            android:id="@+id/map"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            map:mapType="normal"
-            map:uiCompass="false"
-            map:uiRotateGestures="true"
-            map:uiScrollGestures="true"
-            map:uiTiltGestures="true"
-            map:uiZoomControls="true"
-            map:uiZoomGestures="true"
-            map:cameraBearing="0"
-            map:cameraTilt="0"
-            map:cameraZoom="15"
-            map:cameraTargetLat="34.0224"
-            map:cameraTargetLng="-118.2851"
-
-            />
-    </FrameLayout>
-
-    <RelativeLayout
-        android:id="@+id/card"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/toilet_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="60dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:text="Toilet Name"
-            android:textColor="#000000"
-            android:textSize="30dp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/toilet_name"
-            android:layout_marginBottom="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginStart="15dp"
-            android:text="20m"
-            android:textSize="20dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="3131 McClintock Avenue 90007"
-            android:id="@+id/address"
-            android:layout_below="@id/distance"
-            android:layout_marginStart="15dp"
-            android:layout_marginBottom="15dp"
-
-            />
-        <TextView
-            android:id="@+id/disability"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="15dp"
-            android:text="Disabled Access " />
-        <ImageView
-            android:id="@+id/disabledCheck"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/disability"
-            android:src="@drawable/ic_done_black_24px"
-            android:layout_marginTop="17dp"
-            android:maxHeight="15dp"
-            android:maxWidth="15dp"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:layout_marginEnd="5dp"
-            android:tint="@android:color/holo_green_dark"
-            />
-        <TextView
-            android:id="@+id/requiresKey"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/disability"
-            android:layout_alignParentEnd="true"
-            android:layout_alignStart="@id/disability"
-            android:text="Key Required" />
-        <ImageView
-            android:id="@+id/keyCheck"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/requiresKey"
-            android:layout_below="@id/disability"
-            android:src="@drawable/ic_close_black_24px"
-            android:layout_marginTop="3dp"
-            android:maxHeight="15dp"
-            android:maxWidth="15dp"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:layout_marginEnd="5dp"
-            android:tint="@android:color/holo_red_dark"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text = "Comments"
-            android:id="@+id/commentsTag"
-            android:layout_below="@id/address"
-            android:layout_marginStart="15dp"
-            android:layout_marginBottom="0dp"
-            />
-
-        <ListView
-            android:id="@+id/comments"
-            android:layout_below="@id/commentsTag"
-            android:layout_width="wrap_content"
-            android:layout_height="275dp"
-            android:layout_marginStart = "0dp"
-            android:layout_marginEnd = "0dp"
-            />
-
-
-    </RelativeLayout>
-
-
-
-</LinearLayout>
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabImage"
         android:layout_width="wrap_content"
@@ -207,4 +50,160 @@
         app:pressedTranslationZ="12dp"
         />
 
-    </android.support.design.widget.CoordinatorLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:toolbar="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/my_awesome_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize">
+
+            <ImageView
+                android:id="@+id/goToGallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginEnd="30dp"
+                android:src="@drawable/ic_image_white_24px" />
+        </android.support.v7.widget.Toolbar>
+
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:map="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.MapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                map:cameraBearing="0"
+                map:cameraTargetLat="34.0224"
+                map:cameraTargetLng="-118.2851"
+                map:cameraTilt="0"
+                map:cameraZoom="15"
+                map:mapType="normal"
+                map:uiCompass="false"
+                map:uiRotateGestures="true"
+                map:uiScrollGestures="true"
+                map:uiTiltGestures="true"
+                map:uiZoomControls="true"
+                map:uiZoomGestures="true"
+
+                />
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/card"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/toilet_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="60dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:text="Toilet Name"
+                android:textColor="#000000"
+                android:textSize="30dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/toilet_name"
+                android:layout_marginBottom="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
+                android:text="less than 1 mile"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/distance"
+                android:layout_marginBottom="15dp"
+                android:layout_marginStart="15dp"
+                android:text="3131 McClintock Avenue 90007"
+
+                />
+
+            <TextView
+                android:id="@+id/disability"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="15dp"
+                android:text="Disabled Access " />
+
+            <ImageView
+                android:id="@+id/disabledCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="17dp"
+                android:layout_toLeftOf="@id/disability"
+                android:adjustViewBounds="true"
+                android:maxHeight="15dp"
+                android:maxWidth="15dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_done_black_24px"
+                android:tint="@android:color/holo_green_dark" />
+
+            <TextView
+                android:id="@+id/requiresKey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignStart="@id/disability"
+                android:layout_below="@+id/disability"
+                android:text="Key Required" />
+
+            <ImageView
+                android:id="@+id/keyCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/disability"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="3dp"
+                android:layout_toLeftOf="@id/requiresKey"
+                android:adjustViewBounds="true"
+                android:maxHeight="15dp"
+                android:maxWidth="15dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_close_black_24px"
+                android:tint="@android:color/holo_red_dark" />
+
+            <TextView
+                android:id="@+id/commentsTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/address"
+                android:layout_marginBottom="0dp"
+                android:layout_marginStart="15dp"
+                android:text="Comments" />
+
+            <ListView
+                android:id="@+id/comments"
+                android:layout_width="wrap_content"
+                android:layout_height="275dp"
+                android:layout_below="@id/commentsTag"
+                android:layout_marginEnd="0dp"
+                android:layout_marginStart="0dp" />
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

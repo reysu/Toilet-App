@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                                 SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
                                 editor.putString(USERNAME, username);
                                 editor.putInt(USERID, userId);
+                                editor.commit();
                                 Intent i = new Intent(getApplicationContext(), ListActivity.class);
                                 i.putExtra("guest", false);
                                 startActivity(i);
