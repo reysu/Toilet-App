@@ -636,7 +636,7 @@ public class DetailActivity extends AppCompatActivity implements GoogleApiClient
 
 //        return super.onOptionsItemSelected();
     }
-    @Override
+   @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
